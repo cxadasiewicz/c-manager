@@ -1,0 +1,7 @@
+{
+	"name": "c-manager",
+	"version": "1.0.0",
+	"dependencies": {
+		"grunt-core": "cxadasiewicz/grunt-core"
+	}
+}
