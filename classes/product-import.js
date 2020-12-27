@@ -24,13 +24,7 @@ module.exports = class ProductImport {
 
 	// Getting resource addresses
 
-	get name() {
-		return this.importedBundle.name;
-	}
-	get aliasInstallPath() {
-		return this.parentProduct.importsInstallFolder + this.name;
-	}
-	get targetInstallPath() {
-		return this.importedBundle.publicInstallPath;
-	}
+	get name() { return this.importedBundle.name; }
+	get aliasInstallPath() { return this.parentProduct.importsInstallFolder + this.name; }
+	get targetInstallPath() { return this.importedBundle.publicInstallPath; }
 };

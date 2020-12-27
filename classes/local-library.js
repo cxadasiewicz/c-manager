@@ -14,9 +14,7 @@ module.exports = class LocalLibrary extends Library {
 
 	// Getting resource addresses
 
-	get localLibraryPublishedBundlePath() {
-		return this.publishedBundlePath;
-	}
+	get localLibraryPublishedBundlePath() { return this.publishedBundlePath; }
 
 	// Generating installation scripts
 

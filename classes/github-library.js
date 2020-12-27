@@ -30,12 +30,8 @@ module.exports = class GitHubLibrary extends Library {
 			+ this.version
 			+ ".zip";
 	}
-	get archiveCompressedName() {
-		return this.publishedBundleName + "-download.zip";
-	}
-	get archiveExpandedName() {
-		return this.publishedBundleName + "-" + this.version;
-	}
+	get archiveCompressedName() { return this.publishedBundleName + "-download.zip"; }
+	get archiveExpandedName() { return this.publishedBundleName + "-" + this.version; }
 
 	// Generating installation scripts
 

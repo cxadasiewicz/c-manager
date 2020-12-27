@@ -20,13 +20,7 @@ module.exports = class ImportLink {
 
 	// Getting resource addresses
 
-	get aliasInstallFolder() {
-		return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + FileLocations.importsFolder;
-	}
-	get aliasInstallPath() {
-		return this.aliasInstallFolder + this.parentImport.name;
-	}
-	get targetInstallPath() {
-		return this.parentImport.aliasInstallPath + "/" + this.targetPath;
-	}
+	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + FileLocations.importsFolder; }
+	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.name; }
+	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetPath; }
 };

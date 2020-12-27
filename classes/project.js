@@ -41,12 +41,8 @@ module.exports = class Project extends Bundle {
 	// Configuring workspace tasks
 
 	// Installing libraries
-	get installLibrariesTaskName() {
-		return "install_" + this.name + "_libraries";
-	}
-	get uninstallLibrariesTaskName() {
-		return "uninstall_" + this.name + "_libraries";
-	}
+	get installLibrariesTaskName() { return "install_" + this.name + "_libraries"; }
+	get uninstallLibrariesTaskName() { return "uninstall_" + this.name + "_libraries"; }
 
 	configureWorkspaceToInstallLibraries(workspace) {
 		let installScript = [];
@@ -58,12 +54,8 @@ module.exports = class Project extends Bundle {
 	}
 
 	// Installing product imports
-	get installProductImportsTaskName() {
-		return "install_" + this.name + "_imports";
-	}
-	get uninstallProductImportsTaskName() {
-		return "uninstall_" + this.name + "_imports";
-	}
+	get installProductImportsTaskName() { return "install_" + this.name + "_imports"; }
+	get uninstallProductImportsTaskName() { return "uninstall_" + this.name + "_imports"; }
 
 	configureWorkspaceToInstallProductImports(workspace) {
 		let installScript = [];
@@ -78,18 +70,10 @@ module.exports = class Project extends Bundle {
 	}
 
 	// Building products
-	makeProductTaskName(product) {
-		return "make_" + product.name;
-	}
-	cleanProductTaskName(product) {
-		return "clean_" + product.name;
-	}
-	buildProductTaskName(product) {
-		return "build_" + product.name;
-	}
-	uninstallProductBuildsTaskName(product) {
-		return "uninstall_" + product.name + "_builds";
-	}
+	makeProductTaskName(product) { return "make_" + product.name; }
+	cleanProductTaskName(product) { return "clean_" + product.name; }
+	buildProductTaskName(product) { return "build_" + product.name; }
+	uninstallProductBuildsTaskName(product) { return "uninstall_" + product.name + "_builds"; }
 
 	configureWorkspaceToBuildProducts(workspace) {
 		for (const productKey of Object.keys(this.products)) {
@@ -107,9 +91,7 @@ module.exports = class Project extends Bundle {
 	}
 
 	// Uninstall convenience task
-	get uninstallAllTaskName() {
-		return "uninstall_" + this.name + "_all";
-	}
+	get uninstallAllTaskName() {  return "uninstall_" + this.name + "_all"; }
 	configureWorkspaceToUninstallAll(workspace) {
 		let subtasks = [];
 		for (const productKey of Object.keys(this.products)) {
