@@ -87,17 +87,21 @@ module.exports = class Project extends Bundle {
 	buildProductTaskName(product) {
 		return "build_" + product.name;
 	}
+	uninstallProductBuildsTaskName(product) {
+		return "uninstall_" + product.name + "_builds";
+	}
 
 	configureWorkspaceToBuildProducts(workspace) {
 		for (const productKey of Object.keys(this.products)) {
 			const product = this.products[productKey];
 			const buildInfo = product.buildInfo;
 			if (buildInfo) {
+				const cleanTaskName = this.cleanProductTaskName(product);
+				workspace.addShellTask(cleanTaskName, buildInfo.shellScriptToCleanBuild);
 				if (workspace.tryRunningMakefunc(buildInfo.makefuncName, product)) {
-					const cleanTaskName = this.cleanProductTaskName(product);
-					workspace.addShellTask(cleanTaskName, buildInfo.shellScriptToCleanBuild);
 					workspace.addCompoundTask(this.buildProductTaskName(product), [cleanTaskName, this.makeProductTaskName(product)]);
 				}
+				workspace.addShellTask(this.uninstallProductBuildsTaskName(product), buildInfo.shellScriptToUninstallBuilds);
 			}
 		}
 	}
@@ -112,7 +116,7 @@ module.exports = class Project extends Bundle {
 			const product = this.products[productKey];
 			const buildInfo = product.buildInfo;
 			if (buildInfo) {
-				subtasks.push(this.cleanProductTaskName(product));
+				subtasks.push(this.uninstallProductBuildsTaskName(product));
 			}
 		}
 		subtasks.push(this.uninstallProductImportsTaskName);

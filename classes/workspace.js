@@ -1,6 +1,7 @@
 
 "use strict";
 
+const Debugger = require("./debugger");
 const FileLocations = require("./file-locations");
 const ProjectJSONDecoder = require("./project-json-decoder");
 const Project = require("./project");
@@ -8,8 +9,8 @@ const Project = require("./project");
 
 module.exports = class Workspace {
 
-	constructor() {
-		this.makefuncs = {};
+	constructor(makefuncs = {}) {
+		this.makefuncs = makefuncs;
 		this.projects = [];
 	}
 
@@ -43,7 +44,7 @@ module.exports = class Workspace {
 
 	// Managing projects
 
-	addAnyProjectsAt(localInstallFolder = "", parentProject = null, decoder = new ProjectJSONDecoder(), ignoreRecursive = false) {
+	addAnyProjectAt(localInstallFolder, parentProject, decoder) {
 		const r = new Project();
 		r.localInstallFolder = localInstallFolder;
 		r.parentBundle = parentProject;
@@ -54,13 +55,12 @@ module.exports = class Workspace {
 		r.name = packageData.name;
 		decoder.addComponentsDataToProject(componentsData, r);
 		this.projects.push(r);
-		if (!ignoreRecursive) {
-			for (const libraryName of Object.keys(r.libraries)) {
-				this.addAnyProjectsAt(FileLocations.librariesFolder + libraryName + "/", r, decoder);
-			}
-		}
 		return r;
 	}
+
+	// Getting workspace options
+
+	workspaceOption(option) { }
 
 	// Configuring tasks
 
@@ -69,19 +69,71 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	// Running main operations
-
-	discoverComponents() {
-		this.addAnyProjectsAt();
+	// Install/uninstall all
+	get installAllLibrariesTaskName() { return "install-all-libraries"; }
+	configureToInstallAllLibraries() {
+		let subtasks = [];
+		for (const project of this.projects) {
+			subtasks.push(project.installLibrariesTaskName);
+		}
+		this.addCompoundTask(this.installAllLibrariesTaskName, subtasks);
 	}
 
-	configureTasks() {
-		this.beginConfiguringTasks();
+	get installAllProductImportsTaskName() { return "install-all-imports"; }
+	configureToInstallAllProductImports() {
+		let subtasks = [];
 		for (const project of this.projects) {
-			project.configureWorkspaceTasks(this);
+			subtasks.push(project.installProductImportsTaskName);
+		}
+		this.addCompoundTask(this.installAllProductImportsTaskName, subtasks);
+	}
+
+	get uninstallAllTaskName() { return "uninstall-all"; }
+	configureToUninstallAll() {
+		let subtasks = [];
+		for (const project of this.projects) {
+			subtasks.push(project.uninstallAllTaskName);
+		}
+		this.addCompoundTask(this.uninstallAllTaskName, subtasks);
+	}
+
+	configureToInstallAndUninstallAll() {
+		this.configureToInstallAllLibraries();
+		this.configureToInstallAllProductImports();
+		this.configureToUninstallAll();
+	}
+
+	// Managing debugging
+
+	get debugWorkspaceOption() { return "debug-workspace"; }
+
+	runDebugging() {
+		if (this.workspaceOption(this.debugWorkspaceOption)) {
+			Debugger.log(this);
 		}
 	}
 
-	// Debugging options
-	runDebuggingOptions() { }
+	// Running the main operation
+
+	configureTasksByDiscoveringLocalComponents(decoder = new ProjectJSONDecoder()) {
+		this.beginConfiguringTasks();
+		let projectQueue = [];
+		const rootProject = this.addAnyProjectAt("", null, decoder);
+		if (!rootProject) { return; }
+		projectQueue.push(rootProject);
+		let project = projectQueue.pop();
+		while (project) {
+			project.configureWorkspaceTasks(this);
+			for (const libraryKey of Object.keys(project.libraries)) {
+				const library = project.libraries[libraryKey];
+				const localLibraryPath = library.localLibraryPublishedBundlePath;
+				if (localLibraryPath) {
+					projectQueue.push(this.addAnyProjectAt(localLibraryPath + "/", project, decoder));
+				}
+			}
+			project = projectQueue.pop();
+		}
+		this.configureToInstallAndUninstallAll();
+		this.runDebugging();
+	}
 };

@@ -7,9 +7,9 @@ const Workspace = require("./workspace");
 
 module.exports = class GruntWorkspace extends Workspace {
 
-	constructor() {
-		super();
-		this.grunt = null;
+	constructor(grunt, makefuncs = {}) {
+		super(makefuncs);
+		this.grunt = grunt;
 	}
 
 	get descriptionOverrides() {
@@ -22,6 +22,12 @@ module.exports = class GruntWorkspace extends Workspace {
 
 	readJSONAt(path) {
 		return this.grunt.file.readJSON(path);
+	}
+
+	// Getting workspace options
+
+	workspaceOption(option) {
+		return this.grunt.option(option);
 	}
 
 	// Configuring tasks
@@ -50,22 +56,14 @@ module.exports = class GruntWorkspace extends Workspace {
 		this.grunt.registerTask(name, subnames);
 	}
 
-	// Running main operations
+	// Managing debugging
 
-	// Debugging options
-	get debugConfigOptionName() {
-		return "debug-config";
-	}
-	get debugWorkspaceOptionName() {
-		return "debug-workspace";
-	}
+	get debugConfigOption() { return "debug-config"; }
 
-	runDebuggingOptions() {
-		if (this.grunt.option(this.debugConfigOptionName)) {
+	runDebugging() {
+		super.runDebugging();
+		if (this.workspaceOption(this.debugConfigOption)) {
 			Debugger.log(this.grunt.config);
-		}
-		if (this.grunt.option(this.debugWorkspaceOptionName)) {
-			Debugger.log(this);
 		}
 	}
 }
