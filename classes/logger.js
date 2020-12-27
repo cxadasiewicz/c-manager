@@ -4,7 +4,7 @@
 const Utilities = require("util");
 
 
-module.exports = class Debugger {
+module.exports = class Logger {
 
 	static description(object) {
 		let r = "<null>";

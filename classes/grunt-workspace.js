@@ -1,7 +1,7 @@
 
 "use strict";
 
-const Debugger = require("./debugger");
+const Logger = require("./logger");
 const Workspace = require("./workspace");
 
 
@@ -63,7 +63,7 @@ module.exports = class GruntWorkspace extends Workspace {
 	runDebugging() {
 		super.runDebugging();
 		if (this.workspaceOption(this.debugConfigOption)) {
-			Debugger.log(this.grunt.config);
+			Logger.log(this.grunt.config);
 		}
 	}
 }

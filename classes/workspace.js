@@ -1,8 +1,8 @@
 
 "use strict";
 
-const Debugger = require("./debugger");
 const FileLocations = require("./file-locations");
+const Logger = require("./logger");
 const ProjectJSONDecoder = require("./project-json-decoder");
 const Project = require("./project");
 
@@ -109,7 +109,7 @@ module.exports = class Workspace {
 
 	runDebugging() {
 		if (this.workspaceOption(this.debugWorkspaceOption)) {
-			Debugger.log(this);
+			Logger.log(this);
 		}
 	}
 
