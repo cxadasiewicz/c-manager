@@ -29,23 +29,12 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 	get _productImports() { return "imports"; }
 
 	get _specSeparator() { return "|"; }
-	get _variableHead() { return "[["; }
-	get _variableTail() { return "]]"; }
 
 	constructor() {
 		super();
-		this.variables = {};
 	}
 
 	// Managing variables
-
-	resolveVariables(string) {
-		let r = string;
-		for (const key of Object.keys(this.variables)) {
-			r = r.split(this._variableHead + key + this._variableTail).join(this.variables[key]);
-		}
-		return r;
-	}
 
 	addVariablesData(data) {
 		if (!data) { return }
