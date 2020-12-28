@@ -23,7 +23,7 @@ module.exports = class BuildInfo {
 	get shellScriptToCleanBuild() {
 		return ShellScripting.removeAll(this.parentProduct.publicInstallPath + "/");
 	}
-	get shellScriptToUninstallBuilds() {
+	get shellScriptToUninstallBuild() {
 		let r = [];
 		r = r.concat(ShellScripting.removeFolder(this.parentProduct.publicInstallPath + "/"));
 		r = r.concat(ShellScripting.removeEmptyFolder(this.parentProduct.installPath + "/" + FileLocations.buildFolder));

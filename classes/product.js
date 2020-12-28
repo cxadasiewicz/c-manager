@@ -36,11 +36,10 @@ module.exports = class Product extends Bundle {
 
 	get shellScriptToInstallProductImports() {
 		let r = [];
-		const productImportKeys = Object.keys(this.productImports);
-		if (productImportKeys.length) {
+		const productImports = Object.values(this.productImports);
+		if (productImports.length) {
 			r = r.concat(ShellScripting.ensureFolder(this.importsInstallFolder));
-			for (const importKey of productImportKeys) {
-				const productImport = this.productImports[importKey];
+			for (const productImport of productImports) {
 				r = r.concat(ShellScripting.removeFile(productImport.aliasInstallPath));
 				r = r.concat(ShellScripting.link(productImport.aliasInstallPath, productImport.targetInstallPath));
 				for (const importLink of productImport.importLinks) {
@@ -59,8 +58,8 @@ module.exports = class Product extends Bundle {
 	get shellScriptToUninstallProductImports() {
 		let r = [];
 		r = r.concat(ShellScripting.removeFolder(this.importsInstallFolder));
-		for (const importKey of Object.keys(this.productImports)) {
-			for (const importLink of this.productImports[importKey].importLinks) {
+		for (const productImport of Object.values(this.productImports)) {
+			for (const importLink of productImport.importLinks) {
 				r = r.concat(ShellScripting.removeFolder(importLink.aliasInstallFolder));
 			}
 		}
