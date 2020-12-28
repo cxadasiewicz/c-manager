@@ -80,14 +80,14 @@ module.exports = class Project extends Bundle {
 
 	configureWorkspaceToBuildProducts(workspace) {
 		for (const product of Object.values(this.products)) {
-			const buildInfo = product.buildInfo;
-			if (buildInfo) {
+			const buildingInstruction = product.buildingInstruction;
+			if (buildingInstruction) {
 				const cleanTaskName = this.cleanProductTaskName(product);
-				workspace.addShellTask(cleanTaskName, buildInfo.shellScriptToCleanBuild);
-				if (workspace.tryRunningMakefunc(buildInfo.makefuncName, product)) {
+				workspace.addShellTask(cleanTaskName, buildingInstruction.shellScriptToCleanBuild);
+				if (workspace.tryRunningMakefunc(buildingInstruction.makefuncName, product)) {
 					workspace.addCompoundTask(this.buildProductTaskName(product), [cleanTaskName, this.makeProductTaskName(product)]);
 				}
-				workspace.addShellTask(this.uninstallProductTaskName(product), buildInfo.shellScriptToUninstallBuild);
+				workspace.addShellTask(this.uninstallProductTaskName(product), buildingInstruction.shellScriptToUninstallBuild);
 			}
 		}
 	}
@@ -97,7 +97,7 @@ module.exports = class Project extends Bundle {
 	configureWorkspaceToUninstallAll(workspace) {
 		let subtasks = [];
 		for (const product of Object.values(this.products)) {
-			if (product.buildInfo) {
+			if (product.buildingInstruction) {
 				subtasks.push(this.uninstallProductTaskName(product));
 			}
 		}

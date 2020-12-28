@@ -1,7 +1,7 @@
 
 "use strict";
 
-const BuildInfo = require("./build-info");
+const BuildingInstruction = require("./building-instruction");
 const GitHubLibrary = require("./github-library");
 const ImportLink = require("./import-link");
 const LocalLibrary = require("./local-library");
@@ -20,7 +20,7 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 	get _products() { return "products"; }
 	get _productLocalInstallFolder() { return "install"; }
 	get _productPublicName() { return "public"; }
-	get _productBuildInfo() { return "build"; }
+	get _productBuildingInstruction() { return "build"; }
 
 	get _libraries() { return "libraries"; }
 	get _gitHubLibrary() { return "github"; }
@@ -61,11 +61,11 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 			const productData = data[productKey];
 			product.localInstallFolder = this.resolveVariables(productData[this._productLocalInstallFolder]);
 			product.publicName = this.resolveVariables(productData[this._productPublicName]);
-			const buildData = productData[this._productBuildInfo];
+			const buildData = productData[this._productBuildingInstruction];
 			if (buildData) {
-				const buildInfo = new BuildInfo();
-				buildInfo.makefuncName = this.resolveVariables(buildData);
-				product.setBuildInfo(buildInfo);
+				const buildingInstruction = new BuildingInstruction();
+				buildingInstruction.makefuncName = this.resolveVariables(buildData);
+				product.setBuildingInstruction(buildingInstruction);
 			}
 			project.addProduct(product);
 		}

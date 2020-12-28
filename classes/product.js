@@ -12,24 +12,24 @@ module.exports = class Product extends Bundle {
 		super();
 		this.publicName = "";
 		this.productImports = {};
-		this.buildInfo = null;
+		this.buildingInstruction = null;
 	}
 
 	addProductImport(productImport) {
 		productImport.parentProduct = this;
 		this.productImports[productImport.name] = productImport;
 	}
-	setBuildInfo(buildInfo) {
-		if (this.buildInfo) {
-			this.buildInfo.parentProduct = null;
+	setBuildingInstruction(buildingInstruction) {
+		if (this.buildingInstruction) {
+			this.buildingInstruction.parentProduct = null;
 		}
-		buildInfo.parentProduct = this;
-		this.buildInfo = buildInfo;
+		buildingInstruction.parentProduct = this;
+		this.buildingInstruction = buildingInstruction;
 	}
 
 	// Getting resource addresses
 
-	get publicInstallPath() { return this.installPath + "/" + (this.buildInfo ? FileLocations.buildFolder : "") + this.publicName; }
+	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? FileLocations.buildFolder : "") + this.publicName; }
 	get importsInstallFolder() { return this.installPath + "/" + FileLocations.importsFolder; }
 
 	// Generating installation scripts
@@ -45,7 +45,7 @@ module.exports = class Product extends Bundle {
 				for (const importLink of productImport.importLinks) {
 					r = r.concat(ShellScripting.removeFile(importLink.aliasInstallPath));
 					const importedBundle = productImport.importedBundle;
-					if (importedBundle.buildInfo) {
+					if (importedBundle.buildingInstruction) {
 						r = r.concat(ShellScripting.ensureDirectory(importedBundle.publicInstallPath));
 					}
 					r = r.concat(ShellScripting.ensureDirectory(importLink.aliasInstallFolder));

@@ -5,7 +5,7 @@ const FileLocations = require("./file-locations");
 const ShellScripting = require("./shell-scripting");
 
 
-module.exports = class BuildInfo {
+module.exports = class BuildingInstruction {
 
 	constructor() {
 		this.parentProduct = null;

@@ -1,7 +1,7 @@
 
 "use strict";
 
-const BuildInfo = require("./classes/build-info");
+const BuildingInstruction = require("./classes/building-instruction");
 const Bundle = require("./classes/bundle");
 const FileLocations = require("./classes/file-locations");
 const GitHubLibrary = require("./classes/github-library");
@@ -24,7 +24,7 @@ module.exports = class CManager {
 
 	static get name() { return "c-manager"; }
 
-	static get BuildInfo() { return BuildInfo; }
+	static get BuildingInstruction() { return BuildingInstruction; }
 	static get Bundle() { return Bundle; }
 	static get FileLocations() { return FileLocations; }
 	static get GitHubLibrary() { return GitHubLibrary; }
