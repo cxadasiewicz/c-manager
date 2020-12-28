@@ -12,24 +12,34 @@ module.exports = class Project extends Bundle {
 		super();
 		this.products = {};
 		this.libraries = {};
-		this.bundles = {};
 	}
 
 	addProduct(product) {
 		product.parentBundle = this;
 		this.products[product.name] = product;
-		this.bundles[product.name] = product;
 	}
 	addLibrary(library) {
 		library.parentBundle = this;
 		this.libraries[library.name] = library;
-		this.bundles[library.name] = library;
 	}
 
-	get descriptionOverrides() {
-		let r = super.descriptionOverrides;
-		r["bundles"] = Object.keys(this.bundles);
-		return r;
+	bundleReferencedAs(reference) {
+		let r;
+		r = this.products[reference];
+		if (r) { return r; }
+		const referenceParts = reference.split(".", 2);
+		const library = this.libraries[referenceParts[0]];
+		if (library) {
+			if (referenceParts.length == 1) {
+				return library
+			} else {
+				const libraryProject = library.libraryProject;
+				if (libraryProject) {
+					return libraryProject.bundleReferencedAs(referenceParts[1]);
+				}
+			}
+		}
+		return null;
 	}
 
 	// Getting resource addresses

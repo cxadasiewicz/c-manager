@@ -72,6 +72,7 @@ module.exports = class Workspace {
 				}
 				const libraryProject = this.decodeAnyProjectAt(project.installPath + "/" + libraryPath, project, decoder);
 				if (libraryProject) {
+					library.libraryProject = libraryProject;
 					projectQueue.push(libraryProject);
 				}
 			}

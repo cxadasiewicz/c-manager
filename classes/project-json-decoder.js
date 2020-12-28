@@ -104,7 +104,7 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 			const productData = data[productKey];
 			for (const importKey of Object.keys(productData)) {
 				const productImport = new ProductImport();
-				productImport.importedBundle = project.bundles[this.resolveVariables(importKey)];
+				productImport.importedBundle = project.bundleReferencedAs(this.resolveVariables(importKey));
 				const productImportData = productData[importKey];
 				for (const aliasKey of Object.keys(productImportData)) {
 					const importLink = new ImportLink();
