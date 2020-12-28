@@ -18,7 +18,7 @@ module.exports = class Bundle {
 
 	// Getting resource addresses
 
-	get installFolder() { return (this.parentBundle ? this.parentBundle.installFolder : "") + this.localInstallFolder; }
+	get installFolder() { return (this.parentBundle ? this.parentBundle.installPath + "/" : "") + this.localInstallFolder; }
 	get installPath() { return this.installFolder + this.name; }
 	get publicInstallPath() { return this.installPath; }
 };

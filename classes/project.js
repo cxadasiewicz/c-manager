@@ -32,10 +32,14 @@ module.exports = class Project extends Bundle {
 		return r;
 	}
 
+	// Getting resource addresses
+
+	get librariesInstallFolder() { return this.installPath + "/" + FileLocations.librariesFolder; }
+
 	// Generating installation scripts
 
 	get shellScriptToUninstallLibraries() {
-		return ShellScripting.removeFolder(this.installFolder + FileLocations.librariesFolder);
+		return ShellScripting.removeFolder(this.librariesInstallFolder);
 	}
 
 	// Configuring workspace tasks

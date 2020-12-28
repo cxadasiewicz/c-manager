@@ -44,18 +44,39 @@ module.exports = class Workspace {
 
 	// Managing projects
 
-	addAnyProjectAt(localInstallFolder, parentProject, decoder) {
-		const r = new Project();
-		r.localInstallFolder = localInstallFolder;
-		r.parentBundle = parentProject;
-		const packageData = this.tryReadingJSONAt(r.installFolder + FileLocations.packageJSON);
+	decodeAnyProjectAt(localBundlePath, parentProject, decoder) {
+		const packageJSONLocalInstallFolder = (!localBundlePath ? "" : localBundlePath + "/");
+		const packageData = this.tryReadingJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + FileLocations.packageJSON);
 		if (!packageData) { return null; }
 		const componentsData = decoder.componentsDataFrom(packageData);
 		if (!componentsData) { return null; }
+		const r = new Project();
 		r.name = packageData.name;
+		r.localInstallFolder = packageJSONLocalInstallFolder + "../";
+		r.parentBundle = parentProject;
 		decoder.addComponentsDataToProject(componentsData, r);
 		this.projects.push(r);
 		return r;
+	}
+
+	discoverProjectsUsingDecoder(decoder) {
+		let project = this.decodeAnyProjectAt(null, null, decoder);
+		if (!project) { return; }
+		let projectQueue = [];
+		while (project) {
+			for (const libraryKey of Object.keys(project.libraries)) {
+				const library = project.libraries[libraryKey];
+				let localLibraryPath = library.localLibraryPublishedBundlePath;
+				if (!localLibraryPath) {
+					localLibraryPath = FileLocations.librariesFolder + libraryKey;
+				}
+				const libraryProject = this.decodeAnyProjectAt(localLibraryPath, project, decoder);
+				if (libraryProject) {
+					projectQueue.push(libraryProject);
+				}
+			}
+			project = projectQueue.pop();
+		}
 	}
 
 	// Getting workspace options
@@ -115,23 +136,11 @@ module.exports = class Workspace {
 
 	// Running the main operation
 
-	configureTasksByDiscoveringLocalComponents(decoder = new ProjectJSONDecoder()) {
+	discoverProjectsAndConfigureTasks() {
+		this.discoverProjectsUsingDecoder(new ProjectJSONDecoder());
 		this.beginConfiguringTasks();
-		let projectQueue = [];
-		const rootProject = this.addAnyProjectAt("", null, decoder);
-		if (!rootProject) { return; }
-		projectQueue.push(rootProject);
-		let project = projectQueue.pop();
-		while (project) {
+		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
-			for (const libraryKey of Object.keys(project.libraries)) {
-				const library = project.libraries[libraryKey];
-				const localLibraryPath = library.localLibraryPublishedBundlePath;
-				if (localLibraryPath) {
-					projectQueue.push(this.addAnyProjectAt(localLibraryPath + "/", project, decoder));
-				}
-			}
-			project = projectQueue.pop();
 		}
 		this.configureToInstallAndUninstallAll();
 		this.runDebugging();
