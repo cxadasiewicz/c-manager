@@ -8,9 +8,9 @@ const GitHubLibrary = require("./classes/github-library");
 const GruntWorkspace = require("./classes/grunt-workspace");
 const ImportLink = require("./classes/import-link");
 const Library = require("./classes/library");
-const LocalLibrary = require("./classes/local-library");
 const Logger = require("./classes/logger");
 const Manager = require("./classes/manager");
+const PointerLibrary = require("./classes/pointer-library");
 const ProductImport = require("./classes/product-import");
 const Product = require("./classes/product");
 const ProjectDecoder = require("./classes/project-decoder");
@@ -31,9 +31,9 @@ module.exports = class CManager {
 	static get GruntWorkspace() { return GruntWorkspace; }
 	static get ImportLink() { return ImportLink; }
 	static get Library() { return Library; }
-	static get LocalLibrary() { return LocalLibrary; }
 	static get Logger() { return Logger; }
 	static get Manager() { return Manager; }
+	static get PointerLibrary() { return PointerLibrary; }
 	static get ProductImport() { return ProductImport; }
 	static get Product() { return Product; }
 	static get ProjectDecoder() { return ProjectDecoder; }

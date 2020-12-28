@@ -66,11 +66,11 @@ module.exports = class Workspace {
 		while (project) {
 			for (const libraryKey of Object.keys(project.libraries)) {
 				const library = project.libraries[libraryKey];
-				let localLibraryPath = library.localLibraryPublishedBundlePath;
-				if (!localLibraryPath) {
-					localLibraryPath = FileLocations.librariesFolder + libraryKey;
+				let libraryPath = library.pointedBundlePath;
+				if (!libraryPath) {
+					libraryPath = FileLocations.librariesFolder + libraryKey;
 				}
-				const libraryProject = this.decodeAnyProjectAt(localLibraryPath, project, decoder);
+				const libraryProject = this.decodeAnyProjectAt(project.installPath + "/" + libraryPath, project, decoder);
 				if (libraryProject) {
 					projectQueue.push(libraryProject);
 				}

@@ -4,7 +4,7 @@
 const BuildingInstruction = require("./building-instruction");
 const GitHubLibrary = require("./github-library");
 const ImportLink = require("./import-link");
-const LocalLibrary = require("./local-library");
+const PointerLibrary = require("./pointer-library");
 const ProductImport = require("./product-import");
 const Product = require("./product");
 const ProjectDecoder = require("./project-decoder");
@@ -24,7 +24,7 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 
 	get _libraries() { return "libraries"; }
 	get _gitHubLibrary() { return "github"; }
-	get _localLibrary() { return "local"; }
+	get _pointerLibrary() { return "point"; }
 
 	get _productImports() { return "imports"; }
 
@@ -86,9 +86,9 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 				library.publishedTagPrefix = (libraryData.length > 4 ? libraryData[4] : "");
 				library.oauthToken = (libraryData.length > 5 ? libraryData[5] : "");
 				break;
-			case this._localLibrary:
-				library = new LocalLibrary();
-				library.publishedBundlePath = libraryData[1];
+			case this._pointerLibrary:
+				library = new PointerLibrary();
+				library.pointedBundlePath = libraryData[1];
 				break;
 			}
 			library.name = this.resolveVariables(libraryKey);
