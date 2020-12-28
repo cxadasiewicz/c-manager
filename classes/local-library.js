@@ -20,9 +20,9 @@ module.exports = class LocalLibrary extends Library {
 
 	get shellScriptToInstallLibrary() {
 		let r = [];
-		r = r.concat(ShellScripting.removeFolder(this.installPath));
-		r = r.concat(ShellScripting.ensureFolder(this.installFolder));
-		r = r.concat(ShellScripting.link(this.installPath, this.publishedBundlePath));
+		r = r.concat(ShellScripting.removeDirectory(this.installPath));
+		r = r.concat(ShellScripting.ensureDirectory(this.installFolder));
+		r = r.concat(ShellScripting.linkPathToPath(this.installPath, this.publishedBundlePath));
 		return r;
 	}
 };

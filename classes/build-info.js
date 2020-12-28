@@ -21,12 +21,12 @@ module.exports = class BuildInfo {
 	// Generating build scripts
 
 	get shellScriptToCleanBuild() {
-		return ShellScripting.removeAll(this.parentProduct.publicInstallPath + "/");
+		return ShellScripting.removeAllInFolder(this.parentProduct.publicInstallPath + "/");
 	}
 	get shellScriptToUninstallBuild() {
 		let r = [];
-		r = r.concat(ShellScripting.removeFolder(this.parentProduct.publicInstallPath + "/"));
-		r = r.concat(ShellScripting.removeEmptyFolder(this.parentProduct.installPath + "/" + FileLocations.buildFolder));
+		r = r.concat(ShellScripting.removeDirectory(this.parentProduct.publicInstallPath));
+		r = r.concat(ShellScripting.removeEmptyDirectory(this.parentProduct.installPath + "/" + FileLocations.buildFolder));
 		return r;
 	}
 };

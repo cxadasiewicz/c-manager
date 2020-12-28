@@ -39,7 +39,7 @@ module.exports = class Project extends Bundle {
 	// Generating installation scripts
 
 	get shellScriptToUninstallLibraries() {
-		return ShellScripting.removeFolder(this.librariesInstallFolder);
+		return ShellScripting.removeDirectory(this.librariesInstallFolder);
 	}
 
 	// Configuring workspace tasks

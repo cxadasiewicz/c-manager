@@ -109,7 +109,7 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 				for (const aliasKey of Object.keys(productImportData)) {
 					const importLink = new ImportLink();
 					importLink.aliasFolder = this.resolveVariables(aliasKey);
-					importLink.targetPath = this.resolveVariables(productImportData[aliasKey]);
+					importLink.targetSubpath = this.resolveVariables(productImportData[aliasKey]);
 					productImport.addImportLink(importLink);
 				}
 				product.addProductImport(productImport);

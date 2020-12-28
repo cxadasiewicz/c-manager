@@ -9,7 +9,7 @@ module.exports = class ImportLink {
 	constructor() {
 		this.parentImport = null;
 		this.aliasFolder = "";
-		this.targetPath = "";
+		this.targetSubpath = "";
 	}
 
 	get descriptionOverrides() {
@@ -22,5 +22,5 @@ module.exports = class ImportLink {
 
 	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + FileLocations.importsFolder; }
 	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.name; }
-	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetPath; }
+	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetSubpath; }
 };
