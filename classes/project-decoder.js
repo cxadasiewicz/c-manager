@@ -25,4 +25,4 @@ module.exports = class ProjectDecoder {
 
 	componentsDataFrom(data) { }
 	addComponentsDataToProject(data, project) { }
-}
+};

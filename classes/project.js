@@ -117,4 +117,4 @@ module.exports = class Project extends Bundle {
 		this.configureWorkspaceToBuildProducts(workspace);
 		this.configureWorkspaceToUninstallAll(workspace);
 	}
-}
+};

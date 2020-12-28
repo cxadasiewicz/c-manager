@@ -128,4 +128,4 @@ module.exports = class ProjectJSONDecoder extends ProjectDecoder {
 		this.addLibrariesDataToProject(data[this._libraries], project);
 		this.addProductImportsDataToProject(data[this._productImports], project);
 	}
-}
+};

@@ -66,4 +66,4 @@ module.exports = class GruntWorkspace extends Workspace {
 			Logger.log(this.grunt.config);
 		}
 	}
-}
+};
