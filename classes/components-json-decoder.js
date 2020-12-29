@@ -15,7 +15,6 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	get _components() { return "components"; }
 
 	get _variables() { return "variables"; }
-	get _variableDefault() { return "default"; }
 
 	get _products() { return "products"; }
 	get _productLocalInstallFolder() { return "install"; }
@@ -28,26 +27,8 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 
 	get _productImports() { return "imports"; }
 
-	get _specSeparator() { return "|"; }
-
 	constructor() {
 		super();
-	}
-
-	// Managing variables
-
-	addVariablesData(data) {
-		if (!data) { return }
-		for (let key of Object.keys(data)) {
-			const value = this.resolveVariables(data[key]);
-			key = this.resolveVariables(key);
-			if (!value.startsWith(this._variableDefault + this._specSeparator)) {
-				this.variables[key] = value;
-			} else if (!(key in this.variables)) {
-				this.variables[key] = value.replace(this._variableDefault + this._specSeparator, "");
-			}
-
-		}
 	}
 
 	// Parsing component definitions
