@@ -9,6 +9,8 @@ const Project = require("./project");
 
 module.exports = class Workspace {
 
+	static get debugWorkspaceOption() { return "debug-workspace"; }
+
 	constructor(configureMakeTaskPlugins = {}) {
 		this.configureMakeTaskPlugins = configureMakeTaskPlugins;
 		this.projects = [];
@@ -81,10 +83,8 @@ module.exports = class Workspace {
 
 	// Managing debugging
 
-	get debugWorkspaceOption() { return "debug-workspace"; }
-
 	runDebugging() {
-		if (this.workspaceOption(this.debugWorkspaceOption)) {
+		if (this.workspaceOption(Workspace.debugWorkspaceOption)) {
 			Logger.log(this);
 		}
 	}

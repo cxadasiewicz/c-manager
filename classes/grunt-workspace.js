@@ -7,6 +7,8 @@ const Workspace = require("./workspace");
 
 module.exports = class GruntWorkspace extends Workspace {
 
+	static get debugConfigOption() { return "debug-config"; }
+
 	constructor(grunt, configureMakeTaskPlugins = {}) {
 		super(configureMakeTaskPlugins);
 		this.grunt = grunt;
@@ -57,11 +59,9 @@ module.exports = class GruntWorkspace extends Workspace {
 
 	// Managing debugging
 
-	get debugConfigOption() { return "debug-config"; }
-
 	runDebugging() {
 		super.runDebugging();
-		if (this.workspaceOption(this.debugConfigOption)) {
+		if (this.workspaceOption(GruntWorkspace.debugConfigOption)) {
 			Logger.log(this.grunt.config);
 		}
 	}
