@@ -28,6 +28,8 @@ module.exports = class ProductImport {
 	// Getting resource addresses
 
 	get importedBundleName() { return Project.finalPartOfBundleReference(this.importedBundleReference); }
+	get importedBundleTargetsPublicInterface() { return Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
+
 	get aliasInstallPath() { return this.parentProduct.importsInstallFolder + this.importedBundleName; }
-	get targetInstallPath() { return (!Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference) ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
+	get targetInstallPath() { return (!this.importedBundleTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 };

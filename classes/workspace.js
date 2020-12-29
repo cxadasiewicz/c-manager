@@ -91,23 +91,45 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	// Install/uninstall all
-	get installAllLibrariesTaskName() { return "install-all-libraries"; }
-	configureToInstallAllLibraries() {
+	// Install/uninstall
+	get installLibrariesTaskName() { return "install-libraries"; }
+	configureToInstallLibraries() {
 		let subtasks = [];
 		for (const project of this.projects) {
 			subtasks.push(project.installLibrariesTaskName);
 		}
-		this.addCompoundTask(this.installAllLibrariesTaskName, subtasks);
+		this.addCompoundTask(this.installLibrariesTaskName, subtasks);
 	}
 
-	get installAllProductImportsTaskName() { return "install-all-imports"; }
-	configureToInstallAllProductImports() {
+	get installProductImportsTaskName() { return "install-imports"; }
+	configureToInstallProductImports() {
 		let subtasks = [];
 		for (const project of this.projects) {
 			subtasks.push(project.installProductImportsTaskName);
 		}
-		this.addCompoundTask(this.installAllProductImportsTaskName, subtasks);
+		this.addCompoundTask(this.installProductImportsTaskName, subtasks);
+	}
+
+	get uninstallBuildsTaskName() { return "uninstall-builds"; }
+	configureToUninstallBuilds() {
+		let subtasks = [];
+		for (const project of this.projects) {
+			for (const product of Object.values(project.products)) {
+				if (product.buildingInstruction) {
+					subtasks.push(project.uninstallProductTaskName(product));
+				}
+			}
+		}
+		this.addCompoundTask(this.uninstallBuildsTaskName, subtasks);
+	}
+
+	get uninstallProductImportsTaskName() { return "uninstall-imports"; }
+	configureToUninstallProductImports() {
+		let subtasks = [];
+		for (const project of this.projects) {
+			subtasks.push(project.uninstallProductImportsTaskName);
+		}
+		this.addCompoundTask(this.uninstallProductImportsTaskName, subtasks);
 	}
 
 	get uninstallAllTaskName() { return "uninstall-all"; }
@@ -119,9 +141,11 @@ module.exports = class Workspace {
 		this.addCompoundTask(this.uninstallAllTaskName, subtasks);
 	}
 
-	configureToInstallAndUninstallAll() {
-		this.configureToInstallAllLibraries();
-		this.configureToInstallAllProductImports();
+	configureToInstallAndUninstall() {
+		this.configureToInstallLibraries();
+		this.configureToInstallProductImports();
+		this.configureToUninstallBuilds();
+		this.configureToUninstallProductImports();
 		this.configureToUninstallAll();
 	}
 
@@ -143,7 +167,7 @@ module.exports = class Workspace {
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
 		}
-		this.configureToInstallAndUninstallAll();
+		this.configureToInstallAndUninstall();
 		this.runDebugging();
 	}
 };

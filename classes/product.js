@@ -42,14 +42,13 @@ module.exports = class Product extends Bundle {
 		if (productImports.length) {
 			r = r.concat(ShellScripting.ensureDirectory(this.importsInstallFolder));
 			for (const productImport of productImports) {
+				if (productImport.importedBundleTargetsPublicInterface) {
+					r = r.concat(ShellScripting.ensureDirectory(productImport.importedBundle.publicInstallPath));
+				}
 				r = r.concat(ShellScripting.removeFile(productImport.aliasInstallPath));
 				r = r.concat(ShellScripting.linkPathToPath(productImport.aliasInstallPath, productImport.targetInstallPath));
 				for (const importLink of productImport.importLinks) {
 					r = r.concat(ShellScripting.removeFile(importLink.aliasInstallPath));
-					const importedBundle = productImport.importedBundle;
-					if (importedBundle.buildingInstruction) {
-						r = r.concat(ShellScripting.ensureDirectory(importedBundle.publicInstallPath));
-					}
 					r = r.concat(ShellScripting.ensureDirectory(importLink.aliasInstallFolder));
 					r = r.concat(ShellScripting.linkPathToPath(importLink.aliasInstallPath, importLink.targetInstallPath));
 				}
