@@ -14,13 +14,13 @@ module.exports = class ImportLink {
 
 	get descriptionOverrides() {
 		return {
-			"parentImport": (this.parentImport ? this.parentImport.name : null)
+			"parentImport": (this.parentImport ? this.parentImport.importedBundleReference : null)
 		};
 	}
 
 	// Getting resource addresses
 
 	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + FileLocations.importsFolder; }
-	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.name; }
+	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.importedBundleName; }
 	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetSubpath; }
 };

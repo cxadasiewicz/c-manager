@@ -17,7 +17,7 @@ module.exports = class Product extends Bundle {
 
 	addProductImport(productImport) {
 		productImport.parentProduct = this;
-		this.productImports[productImport.name] = productImport;
+		this.productImports[productImport.importedBundleReference] = productImport;
 	}
 	setBuildingInstruction(buildingInstruction) {
 		if (this.buildingInstruction) {
