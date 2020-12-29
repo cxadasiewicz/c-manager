@@ -22,9 +22,12 @@ module.exports = class ImportLink {
 	get aliasFolder() {
 		let r = this.aliasFolderReference;
 		if (r == FileLocations.publicInterface || r.startsWith(FileLocations.publicInterface + "/")) {
-			const publicName = this.parentImport.importedBundle.publicName;
+			const publicName = this.parentImport.parentProduct.publicName;
 			if (publicName) {
 				r = r.replace(FileLocations.publicInterface, publicName);
+				if (r == publicName) {
+					r += "/";
+				}
 			}
 		}
 		return r;
