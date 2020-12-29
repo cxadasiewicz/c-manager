@@ -27,7 +27,7 @@ module.exports = class ProductImport {
 
 	// Getting resource addresses
 
-	get importedBundleName() { return Project.finalBundleNameOfReference(this.importedBundleReference); }
+	get importedBundleName() { return Project.finalPartOfBundleReference(this.importedBundleReference); }
 	get aliasInstallPath() { return this.parentProduct.importsInstallFolder + this.importedBundleName; }
 	get targetInstallPath() { return (!Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference) ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 };

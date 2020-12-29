@@ -2,15 +2,15 @@
 "use strict";
 
 const BuildingInstruction = require("./building-instruction");
+const ComponentsDecoder = require("./components-decoder");
 const GitHubLibrary = require("./github-library");
 const ImportLink = require("./import-link");
 const PointerLibrary = require("./pointer-library");
 const ProductImport = require("./product-import");
 const Product = require("./product");
-const ProjectDecoder = require("./project-decoder");
 
 
-module.exports = class ProjectJSONDecoder extends ProjectDecoder {
+module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 
 	get _components() { return "components"; }
 

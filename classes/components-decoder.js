@@ -2,7 +2,7 @@
 "use strict";
 
 
-module.exports = class ProjectDecoder {
+module.exports = class ComponentsDecoder {
 
 	get _variableHead() { return "[["; }
 	get _variableTail() { return "]]"; }

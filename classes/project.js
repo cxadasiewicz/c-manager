@@ -25,17 +25,20 @@ module.exports = class Project extends Bundle {
 
 	// Managing bundle references
 
+	static get bundleReferencePathPartSeparator() { return "."; }
+	static get bundleReferencePublicInterfaceSuffix() { return Project.bundleReferencePathPartSeparator + "public"; }
+
 	static bundleReferenceTargetsPublicInterface(reference) {
-		return reference.endsWith("*");
+		return reference.endsWith(Project.bundleReferencePublicInterfaceSuffix);
 	}
 	static pathOfBundleReference(reference) {
 		if (!Project.bundleReferenceTargetsPublicInterface(reference)) { return reference; }
-		return reference.substring(0, reference.length - 1);
+		return reference.substring(0, reference.length - Project.bundleReferencePublicInterfaceSuffix.length);
 	}
 	static partsOfBundleReferencePath(referencePath, limit = undefined) {
-		return referencePath.split(".", limit);
+		return referencePath.split(Project.bundleReferencePathPartSeparator, limit);
 	}
-	static finalBundleNameOfReference(reference) {
+	static finalPartOfBundleReference(reference) {
 		const r = Project.partsOfBundleReferencePath(Project.pathOfBundleReference(reference));
 		return r[r.length - 1];
 	}

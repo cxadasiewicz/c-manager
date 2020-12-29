@@ -3,6 +3,8 @@
 
 const BuildingInstruction = require("./classes/building-instruction");
 const Bundle = require("./classes/bundle");
+const ComponentsDecoder = require("./classes/components-decoder");
+const ComponentsJSONDecoder = require("./classes/components-json-decoder");
 const FileLocations = require("./classes/file-locations");
 const GitHubLibrary = require("./classes/github-library");
 const GruntWorkspace = require("./classes/grunt-workspace");
@@ -13,8 +15,6 @@ const Manager = require("./classes/manager");
 const PointerLibrary = require("./classes/pointer-library");
 const ProductImport = require("./classes/product-import");
 const Product = require("./classes/product");
-const ProjectDecoder = require("./classes/project-decoder");
-const ProjectJSONDecoder = require("./classes/project-json-decoder");
 const Project = require("./classes/project");
 const ShellScripting = require("./classes/shell-scripting");
 const Workspace = require("./classes/workspace");
@@ -26,6 +26,8 @@ module.exports = class CManager {
 
 	static get BuildingInstruction() { return BuildingInstruction; }
 	static get Bundle() { return Bundle; }
+	static get ComponentsDecoder() { return ComponentsDecoder; }
+	static get ComponentsJSONDecoder() { return ComponentsJSONDecoder; }
 	static get FileLocations() { return FileLocations; }
 	static get GitHubLibrary() { return GitHubLibrary; }
 	static get GruntWorkspace() { return GruntWorkspace; }
@@ -36,8 +38,6 @@ module.exports = class CManager {
 	static get PointerLibrary() { return PointerLibrary; }
 	static get ProductImport() { return ProductImport; }
 	static get Product() { return Product; }
-	static get ProjectDecoder() { return ProjectDecoder; }
-	static get ProjectJSONDecoder() { return ProjectJSONDecoder; }
 	static get Project() { return Project; }
 	static get ShellScripting() { return ShellScripting; }
 	static get Workspace() { return Workspace; }

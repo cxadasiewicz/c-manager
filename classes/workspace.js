@@ -1,9 +1,9 @@
 
 "use strict";
 
+const ComponentsJSONDecoder = require("./components-json-decoder");
 const FileLocations = require("./file-locations");
 const Logger = require("./logger");
-const ProjectJSONDecoder = require("./project-json-decoder");
 const Project = require("./project");
 
 
@@ -137,8 +137,8 @@ module.exports = class Workspace {
 
 	// Running the main operation
 
-	discoverProjectsAndConfigureTasks() {
-		this.discoverProjectsUsingDecoder(new ProjectJSONDecoder());
+	discoverProjectsAndConfigureTasks(decoder = new ComponentsJSONDecoder()) {
+		this.discoverProjectsUsingDecoder(decoder);
 		this.beginConfiguringTasks();
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
