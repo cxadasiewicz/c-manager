@@ -11,7 +11,6 @@ module.exports = class GruntWorkspace extends Workspace {
 		super(makefuncs);
 		this.grunt = grunt;
 	}
-
 	get descriptionOverrides() {
 		let r = super.descriptionOverrides;
 		r["grunt"] = (this.grunt ? "<grunt>" : null);

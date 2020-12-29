@@ -12,20 +12,20 @@ const Product = require("./product");
 
 module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 
-	get _components() { return "components"; }
+	static get _components() { return "components"; }
 
-	get _variables() { return "variables"; }
+	static get _variables() { return "variables"; }
 
-	get _products() { return "products"; }
-	get _productLocalInstallFolder() { return "install"; }
-	get _productPublicName() { return "public"; }
-	get _productBuildingInstruction() { return "build"; }
+	static get _products() { return "products"; }
+	static get _productLocalInstallFolder() { return "install"; }
+	static get _productPublicName() { return "public"; }
+	static get _productBuildingInstruction() { return "build"; }
 
-	get _libraries() { return "libraries"; }
-	get _gitHubLibrary() { return "github"; }
-	get _pointerLibrary() { return "point"; }
+	static get _libraries() { return "libraries"; }
+	static get _gitHubLibrary() { return "github"; }
+	static get _pointerLibrary() { return "point"; }
 
-	get _productImports() { return "imports"; }
+	static get _productImports() { return "imports"; }
 
 	constructor() {
 		super();
@@ -40,9 +40,9 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 			const product = new Product();
 			product.name = this.resolveVariables(productKey);
 			const productData = data[productKey];
-			product.localInstallFolder = this.resolveVariables(productData[this._productLocalInstallFolder]);
-			product.publicName = this.resolveVariables(productData[this._productPublicName]);
-			const buildData = productData[this._productBuildingInstruction];
+			product.localInstallFolder = this.resolveVariables(productData[ComponentsJSONDecoder._productLocalInstallFolder]);
+			product.publicName = this.resolveVariables(productData[ComponentsJSONDecoder._productPublicName]);
+			const buildData = productData[ComponentsJSONDecoder._productBuildingInstruction];
 			if (buildData) {
 				const buildingInstruction = new BuildingInstruction();
 				buildingInstruction.makefuncName = this.resolveVariables(buildData);
@@ -56,10 +56,10 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	addLibrariesDataToProject(data, project) {
 		if (!data) { return }
 		for (const libraryKey of Object.keys(data)) {
-			const libraryData = this.resolveVariables(data[libraryKey]).split(this._specSeparator);
+			const libraryData = this.resolveVariables(data[libraryKey]).split(ComponentsJSONDecoder._specSeparator);
 			let library;
 			switch (libraryData[0]) {
-			case this._gitHubLibrary:
+			case ComponentsJSONDecoder._gitHubLibrary:
 				library = new GitHubLibrary();
 				library.publisherUsername = libraryData[1];
 				library.publishedBundleName = libraryData[2];
@@ -67,7 +67,7 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 				library.publishedTagPrefix = (libraryData.length > 4 ? libraryData[4] : "");
 				library.oauthToken = (libraryData.length > 5 ? libraryData[5] : "");
 				break;
-			case this._pointerLibrary:
+			case ComponentsJSONDecoder._pointerLibrary:
 				library = new PointerLibrary();
 				library.pointedBundlePath = libraryData[1];
 				break;
@@ -89,7 +89,7 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 				const productImportData = productData[importKey];
 				for (const aliasKey of Object.keys(productImportData)) {
 					const importLink = new ImportLink();
-					importLink.aliasFolder = this.resolveVariables(aliasKey);
+					importLink.aliasFolderReference = this.resolveVariables(aliasKey);
 					importLink.targetSubpath = this.resolveVariables(productImportData[aliasKey]);
 					productImport.addImportLink(importLink);
 				}
@@ -101,12 +101,12 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	// Decoding components
 
 	componentsDataFrom(data) {
-		return (data ? data[this._components] : null);
+		return (data ? data[ComponentsJSONDecoder._components] : null);
 	}
 	addComponentsDataToProject(data, project) {
-		this.addVariablesData(data[this._variables]);
-		this.addProductsDataToProject(data[this._products], project);
-		this.addLibrariesDataToProject(data[this._libraries], project);
-		this.addProductImportsDataToProject(data[this._productImports], project);
+		this.addVariablesData(data[ComponentsJSONDecoder._variables]);
+		this.addProductsDataToProject(data[ComponentsJSONDecoder._products], project);
+		this.addLibrariesDataToProject(data[ComponentsJSONDecoder._libraries], project);
+		this.addProductImportsDataToProject(data[ComponentsJSONDecoder._productImports], project);
 	}
 };

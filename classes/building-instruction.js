@@ -11,7 +11,6 @@ module.exports = class BuildingInstruction {
 		this.parentProduct = null;
 		this.makefuncName = "";
 	}
-
 	get descriptionOverrides() {
 		return {
 			"parentProduct": (this.parentProduct ? this.parentProduct.name : null)

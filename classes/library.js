@@ -12,7 +12,6 @@ module.exports = class Library extends Bundle {
 		this.localInstallFolder = FileLocations.librariesFolder;
 		this.libraryProject = null;
 	}
-
 	get descriptionOverrides() {
 		let r = super.descriptionOverrides;
 		r["libraryProject"] = (this.libraryProject ? this.libraryProject.name : null);

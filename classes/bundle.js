@@ -9,7 +9,6 @@ module.exports = class Bundle {
 		this.localInstallFolder = "";
 		this.parentBundle = null;
 	}
-
 	get descriptionOverrides() {
 		return {
 			"parentBundle": (this.parentBundle ? this.parentBundle.name : null)

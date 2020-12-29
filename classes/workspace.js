@@ -13,7 +13,6 @@ module.exports = class Workspace {
 		this.makefuncs = makefuncs;
 		this.projects = [];
 	}
-
 	get descriptionOverrides() {
 		return {
 			"makefuncs": Object.keys(this.makefuncs)
