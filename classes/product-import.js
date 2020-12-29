@@ -6,7 +6,7 @@ module.exports = class ProductImport {
 
 	constructor() {
 		this.parentProduct = null;
-		this.importedBundle = null;
+		this.importedBundleReference = "";
 		this.importLinks = [];
 	}
 
@@ -21,6 +21,8 @@ module.exports = class ProductImport {
 			"importedBundle": (this.importedBundle ? this.importedBundle.name : null)
 		};
 	}
+
+	get importedBundle() { return this.parentProduct.parentProject.bundleReferencedAs(this.importedBundleReference); }
 
 	// Getting resource addresses
 

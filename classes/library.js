@@ -19,6 +19,8 @@ module.exports = class Library extends Bundle {
 		return r;
 	}
 
+	get parentProject() { return this.parentBundle; }
+
 	// Generating installation scripts
 
 	get shellScriptToInstallLibrary() { }

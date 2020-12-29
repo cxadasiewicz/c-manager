@@ -27,6 +27,8 @@ module.exports = class Product extends Bundle {
 		this.buildingInstruction = buildingInstruction;
 	}
 
+	get parentProject() { return this.parentBundle; }
+
 	// Getting resource addresses
 
 	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? FileLocations.buildFolder : "") + this.publicName; }
