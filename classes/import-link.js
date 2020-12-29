@@ -10,6 +10,7 @@ module.exports = class ImportLink {
 		this.parentImport = null;
 		this.aliasFolderReference = "";
 		this.targetSubpath = "";
+		this._aliasFolderCache = undefined;
 	}
 	get descriptionOverrides() {
 		return {
@@ -17,9 +18,9 @@ module.exports = class ImportLink {
 		};
 	}
 
-	// Getting resource addresses
+	// Getting the alias folder
 
-	get aliasFolder() {
+	calculateAliasFolder() {
 		let r = this.aliasFolderReference;
 		if (r == FileLocations.publicInterface || r.startsWith(FileLocations.publicInterface + "/")) {
 			const publicName = this.parentImport.parentProduct.publicName;
@@ -32,6 +33,14 @@ module.exports = class ImportLink {
 		}
 		return r;
 	}
+	get aliasFolder() {
+		if (this._aliasFolderCache == undefined) {
+			this._aliasFolderCache = this.calculateAliasFolder();
+		}
+		return this._aliasFolderCache;
+	}
+
+	// Getting resource addresses
 
 	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + FileLocations.importsFolder; }
 	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.importedBundleName; }

@@ -10,10 +10,12 @@ module.exports = class ProductImport {
 		this.parentProduct = null;
 		this.importedBundleReference = "";
 		this.importLinks = [];
+		this._importedBundleCache = undefined;
 	}
 	get descriptionOverrides() {
 		return {
-			"parentProduct": (this.parentProduct ? this.parentProduct.name : null)
+			"parentProduct": (this.parentProduct ? this.parentProduct.name : null),
+			"_importedBundleCache": (this._importedBundleCache ? this._importedBundleCache.name : this._importedBundleCache)
 		};
 	}
 
@@ -25,9 +27,17 @@ module.exports = class ProductImport {
 	get importedBundleName() { return Project.finalPartOfBundleReference(this.importedBundleReference); }
 	get importedBundleTargetsPublicInterface() { return Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
 
-	// Dereferencing the imported bundle
+	// Getting the imported bundle
 
-	get importedBundle() { return this.parentProduct.parentProject.bundleReferencedAs(this.importedBundleReference); }
+	dereferenceImportedBundle() {
+		return this.parentProduct.parentProject.bundleReferencedAs(this.importedBundleReference);
+	}
+	get importedBundle() {
+		if (this._importedBundleCache == undefined) {
+			this._importedBundleCache = this.dereferenceImportedBundle();
+		}
+		return this._importedBundleCache;
+	}
 
 	// Getting resource addresses
 
