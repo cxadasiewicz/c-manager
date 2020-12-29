@@ -104,37 +104,13 @@ module.exports = class Project extends Bundle {
 	}
 
 	// Building products
-	makeProductTaskName(product) { return "make_" + product.name; }
-	cleanProductTaskName(product) { return "clean_" + product.name; }
-	buildProductTaskName(product) { return "build_" + product.name; }
-	uninstallProductTaskName(product) { return "uninstall_" + product.name; }
-
 	configureWorkspaceToBuildProducts(workspace) {
 		for (const product of Object.values(this.products)) {
 			const buildingInstruction = product.buildingInstruction;
 			if (buildingInstruction) {
-				const cleanTaskName = this.cleanProductTaskName(product);
-				workspace.addShellTask(cleanTaskName, buildingInstruction.shellScriptToCleanBuild);
-				if (workspace.tryRunningMakefunc(buildingInstruction.makefuncName, product)) {
-					workspace.addCompoundTask(this.buildProductTaskName(product), [cleanTaskName, this.makeProductTaskName(product)]);
-				}
-				workspace.addShellTask(this.uninstallProductTaskName(product), buildingInstruction.shellScriptToUninstallBuild);
+				buildingInstruction.configureWorkspaceToBuildProduct(workspace);
 			}
 		}
-	}
-
-	// Uninstall convenience task
-	get uninstallAllTaskName() {  return "uninstall_" + this.name + "_all"; }
-	configureWorkspaceToUninstallAll(workspace) {
-		let subtasks = [];
-		for (const product of Object.values(this.products)) {
-			if (product.buildingInstruction) {
-				subtasks.push(this.uninstallProductTaskName(product));
-			}
-		}
-		subtasks.push(this.uninstallProductImportsTaskName);
-		subtasks.push(this.uninstallLibrariesTaskName);
-		workspace.addCompoundTask(this.uninstallAllTaskName, subtasks);
 	}
 
 	// All tasks
@@ -142,6 +118,5 @@ module.exports = class Project extends Bundle {
 		this.configureWorkspaceToInstallLibraries(workspace);
 		this.configureWorkspaceToInstallProductImports(workspace);
 		this.configureWorkspaceToBuildProducts(workspace);
-		this.configureWorkspaceToUninstallAll(workspace);
 	}
 };

@@ -7,8 +7,8 @@ const Workspace = require("./workspace");
 
 module.exports = class GruntWorkspace extends Workspace {
 
-	constructor(grunt, makefuncs = {}) {
-		super(makefuncs);
+	constructor(grunt, configureMakeTaskPlugins = {}) {
+		super(configureMakeTaskPlugins);
 		this.grunt = grunt;
 	}
 	get descriptionOverrides() {

@@ -9,13 +9,13 @@ const Project = require("./project");
 
 module.exports = class Workspace {
 
-	constructor(makefuncs = {}) {
-		this.makefuncs = makefuncs;
+	constructor(configureMakeTaskPlugins = {}) {
+		this.configureMakeTaskPlugins = configureMakeTaskPlugins;
 		this.projects = [];
 	}
 	get descriptionOverrides() {
 		return {
-			"makefuncs": Object.keys(this.makefuncs)
+			"configureMakeTaskPlugins": Object.keys(this.configureMakeTaskPlugins)
 		};
 	}
 
@@ -27,17 +27,6 @@ module.exports = class Workspace {
 			return this.readJSONAt(path);
 		} catch(e) {
 			return null;
-		}
-	}
-
-	// Managing makefuncs
-
-	tryRunningMakefunc(name, product) {
-		try {
-			this.makefuncs[name](this, product);
-			return true;
-		} catch(e) {
-			return false;
 		}
 	}
 
@@ -90,64 +79,6 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	// Install/uninstall
-	get installLibrariesTaskName() { return "install-libraries"; }
-	configureToInstallLibraries() {
-		let subtasks = [];
-		for (const project of this.projects) {
-			subtasks.push(project.installLibrariesTaskName);
-		}
-		this.addCompoundTask(this.installLibrariesTaskName, subtasks);
-	}
-
-	get installProductImportsTaskName() { return "install-imports"; }
-	configureToInstallProductImports() {
-		let subtasks = [];
-		for (const project of this.projects) {
-			subtasks.push(project.installProductImportsTaskName);
-		}
-		this.addCompoundTask(this.installProductImportsTaskName, subtasks);
-	}
-
-	get uninstallBuildsTaskName() { return "uninstall-builds"; }
-	configureToUninstallBuilds() {
-		let subtasks = [];
-		for (const project of this.projects) {
-			for (const product of Object.values(project.products)) {
-				if (product.buildingInstruction) {
-					subtasks.push(project.uninstallProductTaskName(product));
-				}
-			}
-		}
-		this.addCompoundTask(this.uninstallBuildsTaskName, subtasks);
-	}
-
-	get uninstallProductImportsTaskName() { return "uninstall-imports"; }
-	configureToUninstallProductImports() {
-		let subtasks = [];
-		for (const project of this.projects) {
-			subtasks.push(project.uninstallProductImportsTaskName);
-		}
-		this.addCompoundTask(this.uninstallProductImportsTaskName, subtasks);
-	}
-
-	get uninstallAllTaskName() { return "uninstall-all"; }
-	configureToUninstallAll() {
-		let subtasks = [];
-		for (const project of this.projects) {
-			subtasks.push(project.uninstallAllTaskName);
-		}
-		this.addCompoundTask(this.uninstallAllTaskName, subtasks);
-	}
-
-	configureToInstallAndUninstall() {
-		this.configureToInstallLibraries();
-		this.configureToInstallProductImports();
-		this.configureToUninstallBuilds();
-		this.configureToUninstallProductImports();
-		this.configureToUninstallAll();
-	}
-
 	// Managing debugging
 
 	get debugWorkspaceOption() { return "debug-workspace"; }
@@ -166,7 +97,6 @@ module.exports = class Workspace {
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
 		}
-		this.configureToInstallAndUninstall();
 		this.runDebugging();
 	}
 };

@@ -45,7 +45,7 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 			const buildData = productData[ComponentsJSONDecoder._productBuildingInstruction];
 			if (buildData) {
 				const buildingInstruction = new BuildingInstruction();
-				buildingInstruction.makefuncName = this.resolveVariables(buildData);
+				buildingInstruction.makeTaskPluginName = this.resolveVariables(buildData);
 				product.setBuildingInstruction(buildingInstruction);
 			}
 			project.addProduct(product);
