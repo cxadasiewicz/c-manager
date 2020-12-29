@@ -23,19 +23,37 @@ module.exports = class Project extends Bundle {
 		this.libraries[library.name] = library;
 	}
 
+	// Managing bundle references
+
+	static bundleReferenceTargetsPublicInterface(reference) {
+		return reference.endsWith("*");
+	}
+	static pathOfBundleReference(reference) {
+		if (!Project.bundleReferenceTargetsPublicInterface(reference)) { return reference; }
+		return reference.substring(0, reference.length - 1);
+	}
+	static partsOfBundleReferencePath(referencePath, limit = undefined) {
+		return referencePath.split(".", limit);
+	}
+	static finalBundleNameOfReference(reference) {
+		const r = Project.partsOfBundleReferencePath(Project.pathOfBundleReference(reference));
+		return r[r.length - 1];
+	}
+
 	bundleReferencedAs(reference) {
+		const referencePath = Project.pathOfBundleReference(reference);
 		let r;
-		r = this.products[reference];
+		r = this.products[referencePath];
 		if (r) { return r; }
-		const referenceParts = reference.split(".", 2);
-		const library = this.libraries[referenceParts[0]];
+		const referencePathParts = Project.partsOfBundleReferencePath(referencePath, 2);
+		const library = this.libraries[referencePathParts[0]];
 		if (library) {
-			if (referenceParts.length == 1) {
+			if (referencePathParts.length == 1) {
 				return library
 			} else {
 				const libraryProject = library.libraryProject;
 				if (libraryProject) {
-					return libraryProject.bundleReferencedAs(referenceParts[1]);
+					return libraryProject.bundleReferencedAs(referencePathParts[1]);
 				}
 			}
 		}

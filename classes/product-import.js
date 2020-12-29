@@ -1,6 +1,8 @@
 
 "use strict";
 
+const Project = require("./project");
+
 
 module.exports = class ProductImport {
 
@@ -25,10 +27,7 @@ module.exports = class ProductImport {
 
 	// Getting resource addresses
 
-	get importedBundleName() {
-		let r = this.importedBundleReference.split(".");
-		return r[r.length - 1];
-	}
+	get importedBundleName() { return Project.finalBundleNameOfReference(this.importedBundleReference); }
 	get aliasInstallPath() { return this.parentProduct.importsInstallFolder + this.importedBundleName; }
-	get targetInstallPath() { return this.importedBundle.publicInstallPath; }
+	get targetInstallPath() { return (!Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference) ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 };
