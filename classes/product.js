@@ -32,7 +32,7 @@ module.exports = class Product extends Bundle {
 	// Getting resource addresses
 
 	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? ResourceIdentifiers.buildFolder : "") + this.publicName; }
-	get importsInstallFolder() { return this.installPath + "/" + ResourceIdentifiers.importsFolder; }
+	get importsInstallFolder() { return this.installPath + "/" + ResourceIdentifiers.productImportsFolder; }
 
 	// Generating installation scripts
 
