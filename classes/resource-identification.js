@@ -41,7 +41,7 @@ module.exports = class ResourceIdentification {
 	// Workspace tasks
 	static get taskNameSeparator() { return "_"; }
 	static taskName(action, component, section) {
-		return action + this.taskNameSeparator + component.name + (section ? this.taskNameSeparator + section : "");
+		return action + this.taskNameSeparator + (component.name ? component.name : component) + (section ? this.taskNameSeparator + section : "");
 	}
 
 	static installTaskName(component, section) { return this.taskName("install", component, section); }

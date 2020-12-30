@@ -92,6 +92,36 @@ module.exports = class Workspace {
 		this.configureToUninstallAllComponents();
 	}
 
+	// Installation conveniences
+	installTaskName(section) { return ResourceIdentification.installTaskName(ResourceIdentification.allComponentsName, section); }
+	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(ResourceIdentification.allComponentsName, section); }
+
+	configureToInstallAndUninstallAll() {
+		const projects = Utilities.sortValuesBySortOrder(this.projects);
+		let libraryInstallTasks = [];
+		let productImportInstallTasks = [];
+		for (const project of projects) {
+			libraryInstallTasks.push(project.installTaskName(ResourceIdentification.librariesName));
+			productImportInstallTasks.push(project.installTaskName(ResourceIdentification.productImportsName))
+		}
+		const installLibrariesTask = this.installTaskName(ResourceIdentification.librariesName);
+		this.addCompoundTask(installLibrariesTask, libraryInstallTasks);
+		const installProductImportsTask = this.installTaskName(ResourceIdentification.productImportsName);
+		this.addCompoundTask(installProductImportsTask, productImportInstallTasks);
+		this.addCompoundTask(this.installTaskName(), [installLibrariesTask, installProductImportsTask]);
+		let libraryUninstallTasks = [];
+		let productImportUninstallTasks = [];
+		for (const project of projects.slice().reverse()) {
+			libraryUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.librariesName));
+			productImportUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.productImportsName))
+		}
+		const uninstallLibrariesTask = this.uninstallTaskName(ResourceIdentification.librariesName);
+		this.addCompoundTask(uninstallLibrariesTask, libraryUninstallTasks);
+		const uninstallProductImportsTask = this.uninstallTaskName(ResourceIdentification.productImportsName);
+		this.addCompoundTask(uninstallProductImportsTask, productImportUninstallTasks);
+		this.addCompoundTask(this.uninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
+	}
+
 	// Managing debugging
 
 	get shouldDebugWorkspace() { return this.workspaceOption(Workspace._debugWorkspaceOption); }
@@ -110,6 +140,7 @@ module.exports = class Workspace {
 		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
 			project.configureWorkspaceTasks(this);
 		}
+		this.configureToInstallAndUninstallAll();
 		this.runDebugging();
 	}
 };
