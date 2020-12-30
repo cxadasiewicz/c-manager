@@ -82,15 +82,15 @@ module.exports = class Workspace {
 	addCompoundTask(name, subnames) { }
 
 	// Installation conveniences
-	installAllComponentsTaskName(component) {
-		return "install-all" + (component ? "-" + component : "");
+	installAllComponentsTaskName(section) {
+		return "install-all" + (section ? "-" + section : "");
 	}
 	configureToInstallAllComponents() {
 		let libraryTasks = [];
 		let productImportTasks = [];
 		for (const project of this.projects) {
-			libraryTasks.push(project.installLibrariesTaskName);
-			productImportTasks.push(project.installProductImportsTaskName);
+			libraryTasks.push(project.installComponentsTaskName(ResourceIdentification.librariesName));
+			productImportTasks.push(project.installComponentsTaskName(ResourceIdentification.productImportsName));
 		}
 		let allTasks = [];
 		let task;
@@ -103,17 +103,17 @@ module.exports = class Workspace {
 		this.addCompoundTask(this.installAllComponentsTaskName(), allTasks);
 	}
 
-	uninstallAllComponentsTaskName(component) {
-		return "uninstall-all" + (component ? "-" + component : "");
+	uninstallAllComponentsTaskName(section) {
+		return "uninstall-all" + (section ? "-" + section : "");
 	}
 	configureToUninstallAllComponents() {
 		let buildTasks = [];
 		let productImportTasks = [];
 		let libraryTasks = [];
 		for (const project of this.projects) {
-			buildTasks.push(project.uninstallBuildTaskName);
-			productImportTasks.push(project.uninstallProductImportsTaskName);
-			libraryTasks.push(project.uninstallLibrariesTaskName);
+			buildTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.buildName));
+			productImportTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.productImportsName));
+			libraryTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.librariesName));
 		}
 		let allTasks = [];
 		let task;

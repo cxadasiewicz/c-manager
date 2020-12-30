@@ -57,23 +57,24 @@ module.exports = class Project extends Bundle {
 
 	// Configuring workspace tasks
 
-	// Installing libraries
-	get installLibrariesTaskName() { return "install_" + this.name + "_libraries"; }
-	get uninstallLibrariesTaskName() { return "uninstall_" + this.name + "_libraries"; }
+	installComponentsTaskName(section) {
+		return "install_" + this.name + (section ? "_" + section : "");
+	}
+	uninstallComponentsTaskName(section) {
+		return "uninstall_" + this.name + (section ? "_" + section : "");
+	}
 
+	// Installing libraries
 	configureWorkspaceToInstallLibraries(workspace) {
 		let installScript = [];
 		for (const library of Object.values(this.libraries)) {
 			installScript = installScript.concat(library.shellScriptToInstallLibrary);
 		}
-		workspace.addShellTask(this.installLibrariesTaskName, installScript);
-		workspace.addShellTask(this.uninstallLibrariesTaskName, this.shellScriptToUninstallLibraries);
+		workspace.addShellTask(this.installComponentsTaskName(ResourceIdentification.librariesName), installScript);
+		workspace.addShellTask(this.uninstallComponentsTaskName(ResourceIdentification.librariesName), this.shellScriptToUninstallLibraries);
 	}
 
 	// Installing product imports
-	get installProductImportsTaskName() { return "install_" + this.name + "_imports"; }
-	get uninstallProductImportsTaskName() { return "uninstall_" + this.name + "_imports"; }
-
 	configureWorkspaceToInstallProductImports(workspace) {
 		let installScript = [];
 		let uninstallScript = [];
@@ -81,13 +82,11 @@ module.exports = class Project extends Bundle {
 			installScript = installScript.concat(product.shellScriptToInstallProductImports);
 			uninstallScript = uninstallScript.concat(product.shellScriptToUninstallProductImports);
 		}
-		workspace.addShellTask(this.installProductImportsTaskName, installScript);
-		workspace.addShellTask(this.uninstallProductImportsTaskName, uninstallScript);
+		workspace.addShellTask(this.installComponentsTaskName(ResourceIdentification.productImportsName), installScript);
+		workspace.addShellTask(this.uninstallComponentsTaskName(ResourceIdentification.productImportsName), uninstallScript);
 	}
 
 	// Building products
-	get uninstallBuildTaskName() { return "uninstall_" + this.name + "_build"; }
-
 	configureWorkspaceToBuildProductsAndUninstallBuild(workspace) {
 		let uninstallTasks = [];
 		for (const product of Object.values(this.products)) {
@@ -97,7 +96,20 @@ module.exports = class Project extends Bundle {
 				uninstallTasks.push(buildingInstruction.uninstallBuildTaskName);
 			}
 		}
-		workspace.addCompoundTask(this.uninstallBuildTaskName, uninstallTasks);
+		workspace.addCompoundTask(this.uninstallComponentsTaskName(ResourceIdentification.buildName), uninstallTasks);
+	}
+
+	// Installation conveniences
+	configureWorkspaceToInstallAndUninstallAll(workspace) {
+		workspace.addCompoundTask(this.installComponentsTaskName(), [
+			this.installComponentsTaskName(ResourceIdentification.librariesName),
+			this.installComponentsTaskName(ResourceIdentification.productImportsName)
+		]);
+		workspace.addCompoundTask(this.uninstallComponentsTaskName(), [
+			this.uninstallComponentsTaskName(ResourceIdentification.buildName),
+			this.uninstallComponentsTaskName(ResourceIdentification.productImportsName),
+			this.uninstallComponentsTaskName(ResourceIdentification.librariesName)
+		])
 	}
 
 	// All tasks
@@ -105,5 +117,6 @@ module.exports = class Project extends Bundle {
 		this.configureWorkspaceToInstallLibraries(workspace);
 		this.configureWorkspaceToInstallProductImports(workspace);
 		this.configureWorkspaceToBuildProductsAndUninstallBuild(workspace);
+		this.configureWorkspaceToInstallAndUninstallAll(workspace);
 	}
 };
