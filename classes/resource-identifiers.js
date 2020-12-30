@@ -2,7 +2,7 @@
 "use strict";
 
 
-module.exports = class ResourceLocations {
+module.exports = class ResourceIdentifiers {
 
 	static get packageJSON() { return "package.json"; }
 

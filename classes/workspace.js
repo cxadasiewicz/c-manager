@@ -2,9 +2,9 @@
 "use strict";
 
 const ComponentsJSONDecoder = require("./components-json-decoder");
-const ResourceLocations = require("./resource-locations");
 const Logger = require("./logger");
 const Project = require("./project");
+const ResourceIdentifiers = require("./resource-identifiers");
 
 
 module.exports = class Workspace {
@@ -36,7 +36,7 @@ module.exports = class Workspace {
 
 	decodeAnyProjectAt(localBundlePath, parentProject, decoder) {
 		const packageJSONLocalInstallFolder = (!localBundlePath ? "" : localBundlePath + "/");
-		const packageData = this.tryReadingJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + ResourceLocations.packageJSON);
+		const packageData = this.tryReadingJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + ResourceIdentifiers.packageJSON);
 		if (!packageData) { return null; }
 		const componentsData = decoder.componentsDataFrom(packageData);
 		if (!componentsData) { return null; }
@@ -58,7 +58,7 @@ module.exports = class Workspace {
 				const library = project.libraries[libraryKey];
 				let libraryPath = library.pointedBundlePath;
 				if (!libraryPath) {
-					libraryPath = ResourceLocations.librariesFolder + libraryKey;
+					libraryPath = ResourceIdentifiers.librariesFolder + libraryKey;
 				}
 				const libraryProject = this.decodeAnyProjectAt(project.installPath + "/" + libraryPath, project, decoder);
 				if (libraryProject) {

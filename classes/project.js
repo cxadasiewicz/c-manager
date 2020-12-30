@@ -2,7 +2,7 @@
 "use strict";
 
 const Bundle = require("./bundle");
-const ResourceLocations = require("./resource-locations");
+const ResourceIdentifiers = require("./resource-identifiers");
 const ShellScripting = require("./shell-scripting");
 
 
@@ -65,7 +65,7 @@ module.exports = class Project extends Bundle {
 
 	// Getting resource addresses
 
-	get librariesInstallFolder() { return this.installPath + "/" + ResourceLocations.librariesFolder; }
+	get librariesInstallFolder() { return this.installPath + "/" + ResourceIdentifiers.librariesFolder; }
 
 	// Generating installation scripts
 
