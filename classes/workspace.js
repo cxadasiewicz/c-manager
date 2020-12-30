@@ -87,14 +87,11 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	configureToInstallAndUninstallAllComponents() {
-		this.configureToInstallAllComponents()
-		this.configureToUninstallAllComponents();
-	}
-
-	// Installation conveniences
-	installTaskName(section) { return ResourceIdentification.installTaskName(ResourceIdentification.allComponentsName, section); }
-	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(ResourceIdentification.allComponentsName, section); }
+	// Convenience tasks
+	installTaskName(section) { return ResourceIdentification.installTaskName(null, section); }
+	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(null, section); }
+	get buildTaskName() { return ResourceIdentification.buildTaskName() }
+	get cleanTaskName() { return ResourceIdentification.cleanTaskName() }
 
 	configureToInstallAndUninstallAll() {
 		const projects = Utilities.sortValuesBySortOrder(this.projects);
@@ -122,6 +119,22 @@ module.exports = class Workspace {
 		this.addCompoundTask(this.uninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
 	}
 
+	configureToBuildAndCleanAll() {
+		let buildTasks = [];
+		let cleanTasks = [];
+		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
+			buildTasks.push(project.buildTaskName);
+			cleanTasks.push(project.cleanTaskName);
+		}
+		this.addCompoundTask(this.buildTaskName, buildTasks);
+		this.addCompoundTask(this.cleanTaskName, cleanTasks);
+	}
+
+	configureConvenienceTasks() {
+		this.configureToInstallAndUninstallAll();
+		this.configureToBuildAndCleanAll();
+	}
+
 	// Managing debugging
 
 	get shouldDebugWorkspace() { return this.workspaceOption(Workspace._debugWorkspaceOption); }
@@ -140,7 +153,7 @@ module.exports = class Workspace {
 		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
 			project.configureWorkspaceTasks(this);
 		}
-		this.configureToInstallAndUninstallAll();
+		this.configureConvenienceTasks();
 		this.runDebugging();
 	}
 };

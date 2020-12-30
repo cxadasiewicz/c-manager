@@ -10,7 +10,6 @@ module.exports = class ResourceIdentification {
 	static get buildName() { return "build"; }
 
 	static get publicInterfaceName() { return "public"; }
-	static get allComponentsName() { return "all"; }
 
 	// Global folders and paths
 	static get librariesFolder() { return this.librariesName + "/"; }
@@ -40,8 +39,9 @@ module.exports = class ResourceIdentification {
 
 	// Workspace tasks
 	static get taskNameSeparator() { return "_"; }
+	static get globalTaskSuffix() { return "-all"; }
 	static taskName(action, component, section) {
-		return action + this.taskNameSeparator + (component.name ? component.name : component) + (section ? this.taskNameSeparator + section : "");
+		return action + (component ? this.taskNameSeparator + component.name : this.globalTaskSuffix) + (section ? this.taskNameSeparator + section : "");
 	}
 
 	static installTaskName(component, section) { return this.taskName("install", component, section); }

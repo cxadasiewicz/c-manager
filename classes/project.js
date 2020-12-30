@@ -64,6 +64,8 @@ module.exports = class Project extends Bundle {
 
 	installTaskName(section) { return ResourceIdentification.installTaskName(this, section); }
 	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(this, section); }
+	get buildTaskName() { return ResourceIdentification.buildTaskName(this); }
+	get cleanTaskName() { return ResourceIdentification.cleanTaskName(this); }
 
 	// Installing and uninstalling libraries
 	configureWorkspaceToInstallAndUninstallLibraries(workspace) {
@@ -92,27 +94,21 @@ module.exports = class Project extends Bundle {
 
 	// Building and cleaning products
 	configureWorkspaceToBuildAndCleanProducts(workspace) {
-		const products = Utilities.sortValuesBySortOrder(this.products);
 		let buildTasks = [];
-		for (const product of products) {
+		let cleanTasks = [];
+		for (const product of Utilities.sortValuesBySortOrder(this.products)) {
 			const buildingInstruction = product.buildingInstruction;
 			if (buildingInstruction) {
 				buildingInstruction.configureWorkspaceToBuildAndCleanProduct(workspace);
 				buildTasks.push(buildingInstruction.buildProductTaskName);
-			}
-		}
-		workspace.addCompoundTask(ResourceIdentification.buildTaskName(this), buildTasks);
-		let cleanTasks = [];
-		for (const product of products.slice().reverse()) {
-			const buildingInstruction = product.buildingInstruction;
-			if (buildingInstruction) {
 				cleanTasks.push(buildingInstruction.cleanProductTaskName);
 			}
 		}
-		workspace.addCompoundTask(ResourceIdentification.cleanTaskName(this), cleanTasks);
+		workspace.addCompoundTask(this.buildTaskName, buildTasks);
+		workspace.addCompoundTask(this.cleanTaskName, cleanTasks);
 	}
 
-	// Installation conveniences
+	// Convenience tasks
 	configureWorkspaceToInstallAndUninstallAll(workspace) {
 		workspace.addCompoundTask(this.installTaskName(), [
 			this.installTaskName(ResourceIdentification.librariesName),
@@ -124,11 +120,15 @@ module.exports = class Project extends Bundle {
 		]);
 	}
 
+	configureWorkspaceConvenienceTasks(workspace) {
+		this.configureWorkspaceToInstallAndUninstallAll(workspace);
+	}
+
 	// All tasks
 	configureWorkspaceTasks(workspace) {
 		this.configureWorkspaceToInstallAndUninstallLibraries(workspace);
 		this.configureWorkspaceToInstallAndUninstallProductImports(workspace);
 		this.configureWorkspaceToBuildAndCleanProducts(workspace);
-		this.configureWorkspaceToInstallAndUninstallAll(workspace);
+		this.configureWorkspaceConvenienceTasks(workspace);
 	}
 };
