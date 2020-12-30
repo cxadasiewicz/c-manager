@@ -5,6 +5,7 @@ const ComponentsJSONDecoder = require("./components-json-decoder");
 const Logger = require("./logger");
 const Project = require("./project");
 const ResourceIdentification = require("./resource-identification");
+const Utilities = require("./utilities");
 
 
 module.exports = class Workspace {
@@ -13,12 +14,17 @@ module.exports = class Workspace {
 
 	constructor(configureMakeTaskPlugins = {}) {
 		this.configureMakeTaskPlugins = configureMakeTaskPlugins;
-		this.projects = [];
+		this.projects = {};
 	}
 	get descriptionOverrides() {
 		return {
 			"configureMakeTaskPlugins": Object.keys(this.configureMakeTaskPlugins)
 		};
+	}
+
+	addProject(project) {
+		project.sortOrder = Object.keys(this.projects).length;
+		this.projects[project.name] = project;
 	}
 
 	// Managing files
@@ -45,7 +51,7 @@ module.exports = class Workspace {
 		r.localInstallFolder = packageJSONLocalInstallFolder + "../";
 		r.parentBundle = parentProject;
 		decoder.addComponentsDataToProject(componentsData, r);
-		this.projects.push(r);
+		this.addProject(r);
 		return r;
 	}
 
@@ -101,7 +107,7 @@ module.exports = class Workspace {
 	discoverProjectsAndConfigureTasks(decoder = new ComponentsJSONDecoder()) {
 		this.discoverProjectsUsingDecoder(decoder);
 		this.beginConfiguringTasks();
-		for (const project of this.projects) {
+		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
 			project.configureWorkspaceTasks(this);
 		}
 		this.runDebugging();

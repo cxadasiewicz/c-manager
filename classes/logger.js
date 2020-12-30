@@ -1,14 +1,16 @@
 
 "use strict";
 
-const Utilities = require("util");
+const NodeUtilities = require("util");
 
 
 module.exports = class Logger {
 
 	static description(object) {
 		let r = "<null>";
-		if (object == "") {
+		if (typeof object == "number" || typeof object == "boolean") {
+			r = object;
+		} else if (object == "") {
 			r = "";
 		} else if (object) {
 			if (typeof object == "string") {
@@ -27,11 +29,18 @@ module.exports = class Logger {
 				r = {};
 				const descriptionOverrides = object.descriptionOverrides;
 				for (const key of Object.keys(object)) {
+					let rr;
 					if (descriptionOverrides && key in descriptionOverrides) {
-						r[key] = this.description(descriptionOverrides[key]);
+						rr = descriptionOverrides[key];
 					} else {
-						r[key] = this.description(object[key]);
+						rr = object[key];
 					}
+					let typeSuffix;
+					if (rr) {
+						typeSuffix = rr.descriptionTypeSuffix;
+					}
+					typeSuffix = (typeSuffix ? ": " + typeSuffix : "");
+					r[key + typeSuffix] = this.description(rr);
 				}
 			}
 		}
@@ -39,6 +48,6 @@ module.exports = class Logger {
 	}
 
 	static log(object) {
-		console.log(Utilities.inspect(this.description(object), false, null));
+		console.log(NodeUtilities.inspect(this.description(object), false, null, true));
 	}
 };

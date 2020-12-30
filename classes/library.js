@@ -9,6 +9,7 @@ module.exports = class Library extends Bundle {
 
 	constructor() {
 		super();
+		this.sortOrder = 0;
 		this.localInstallFolder = ResourceIdentification.librariesFolder;
 		this.libraryProject = null;
 	}
@@ -17,6 +18,7 @@ module.exports = class Library extends Bundle {
 		r["libraryProject"] = (this.libraryProject ? this.libraryProject.name : null);
 		return r;
 	}
+	get descriptionTypeSuffix() { return "library"; }
 
 	get parentProject() { return this.parentBundle; }
 

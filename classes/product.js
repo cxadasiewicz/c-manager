@@ -4,19 +4,23 @@
 const Bundle = require("./bundle");
 const ResourceIdentification = require("./resource-identification");
 const ShellScripting = require("./shell-scripting");
+const Utilities = require("./utilities");
 
 
 module.exports = class Product extends Bundle {
 
 	constructor() {
 		super();
+		this.sortOrder = 0;
 		this.publicName = "";
 		this.productImports = {};
 		this.buildingInstruction = null;
 	}
+	get descriptionTypeSuffix() { return "product"; }
 
 	addProductImport(productImport) {
 		productImport.parentProduct = this;
+		productImport.sortOrder = Object.keys(this.productImports).length;
 		this.productImports[productImport.importedBundleReference] = productImport;
 	}
 	setBuildingInstruction(buildingInstruction) {
@@ -38,7 +42,7 @@ module.exports = class Product extends Bundle {
 
 	get shellScriptToInstallProductImports() {
 		let r = [];
-		const productImports = Object.values(this.productImports);
+		const productImports = Utilities.sortValuesBySortOrder(this.productImports);
 		if (productImports.length) {
 			r = r.concat(ShellScripting.ensureDirectory(this.productImportsInstallFolder));
 			for (const productImport of productImports) {
@@ -59,7 +63,7 @@ module.exports = class Product extends Bundle {
 	get shellScriptToUninstallProductImports() {
 		let r = [];
 		r = r.concat(ShellScripting.removeDirectory(this.productImportsInstallFolder));
-		for (const productImport of Object.values(this.productImports)) {
+		for (const productImport of Utilities.sortValuesBySortOrder(this.productImports).reverse()) {
 			for (const importLink of productImport.importLinks) {
 				r = r.concat(ShellScripting.removeDirectory(importLink.aliasInstallFolder));
 			}

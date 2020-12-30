@@ -8,6 +8,7 @@ module.exports = class ProductImport {
 
 	constructor() {
 		this.parentProduct = null;
+		this.sortOrder = 0;
 		this.importedBundleReference = "";
 		this.importLinks = [];
 		this._importedBundleCache = undefined;
