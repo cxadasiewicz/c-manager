@@ -9,6 +9,13 @@ const ResourceIdentifiers = require("./resource-identifiers");
 
 module.exports = class Workspace {
 
+	static get includeLibrariesOption() { return "libraries"; }
+	static get includeProductImportsOption() { return "imports"; }
+	static get includeBuildOption() { return "build"; }
+
+	static get installAllTaskName() { return "install"; }
+	static get uninstallAllTaskName() { return "uninstall"; }
+
 	static get debugWorkspaceOption() { return "debug-workspace"; }
 
 	constructor(configureMakeTaskPlugins = {}) {
@@ -74,12 +81,30 @@ module.exports = class Workspace {
 
 	workspaceOption(option) { }
 
+	get shouldOptionallyIncludeLibraries() { return this.workspaceOption(Workspace.includeLibrariesOption); }
+	get shouldOptionallyIncludeProductImports() { return this.workspaceOption(Workspace.includeProductImportsOption); }
+	get shouldOptionallyIncludeBuild() { return this.workspaceOption(Workspace.includeBuildOption); }
+
 	// Configuring tasks
 
 	beginConfiguringTasks() { }
 
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
+
+	// Installation conveniences
+	configureToInstallAndUninstallAllComponents() {
+		let installTasks = [];
+		for (const project of this.projects) {
+			installTasks.push(project.installComponentsTaskName);
+		}
+		this.addCompoundTask(Workspace.installAllTaskName, installTasks);
+		let uninstallTasks = [];
+		for (const project of this.projects.slice().reverse()) {
+			uninstallTasks.push(project.uninstallComponentsTaskName);
+		}
+		this.addCompoundTask(Workspace.uninstallAllTaskName, uninstallTasks);
+	}
 
 	// Managing debugging
 
@@ -97,6 +122,7 @@ module.exports = class Workspace {
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
 		}
+		this.configureToInstallAndUninstallAllComponents();
 		this.runDebugging();
 	}
 };

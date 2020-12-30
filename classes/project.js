@@ -113,10 +113,40 @@ module.exports = class Project extends Bundle {
 		}
 	}
 
+	// Installation conveniences
+	get installComponentsTaskName() { return "install_" + this.name; }
+	get uninstallComponentsTaskName() { return "uninstall_" + this.name; }
+
+	configureWorkspaceToInstallAndUninstallComponents(workspace) {
+		let includeLibraries = workspace.shouldOptionallyIncludeLibraries;
+		let includeProductImports = workspace.shouldOptionallyIncludeProductImports;
+		if (!includeLibraries && !includeProductImports) {
+			includeLibraries = true;
+			includeProductImports = true;
+		}
+		let installTasks = [];
+		if (includeLibraries) {
+			installTasks.push(this.installLibrariesTaskName);
+		}
+		if (includeProductImports) {
+			installTasks.push(this.installProductImportsTaskName);
+		}
+		workspace.addCompoundTask(this.installComponentsTaskName, installTasks);
+		let uninstallTasks = [];
+		if (includeProductImports) {
+			uninstallTasks.push(this.uninstallProductImportsTaskName);
+		}
+		if (includeLibraries) {
+			uninstallTasks.push(this.uninstallLibrariesTaskName);
+		}
+		workspace.addCompoundTask(this.uninstallComponentsTaskName, uninstallTasks);
+	}
+
 	// All tasks
 	configureWorkspaceTasks(workspace) {
 		this.configureWorkspaceToInstallLibraries(workspace);
 		this.configureWorkspaceToInstallProductImports(workspace);
 		this.configureWorkspaceToBuildProducts(workspace);
+		this.configureWorkspaceToInstallAndUninstallComponents(workspace);
 	}
 };
