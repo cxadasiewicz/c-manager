@@ -64,8 +64,6 @@ module.exports = class Project extends Bundle {
 
 	installTaskName(section) { return ResourceIdentification.installTaskName(this, section); }
 	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(this, section); }
-	get buildTaskName() { return ResourceIdentification.buildTaskName(this); }
-	get cleanTaskName() { return ResourceIdentification.cleanTaskName(this); }
 
 	// Installing and uninstalling libraries
 	configureWorkspaceToInstallAndUninstallLibraries(workspace) {
@@ -94,18 +92,12 @@ module.exports = class Project extends Bundle {
 
 	// Building and cleaning products
 	configureWorkspaceToBuildAndCleanProducts(workspace) {
-		let buildTasks = [];
-		let cleanTasks = [];
 		for (const product of Utilities.sortValuesBySortOrder(this.products)) {
 			const buildingInstruction = product.buildingInstruction;
 			if (buildingInstruction) {
 				buildingInstruction.configureWorkspaceToBuildAndCleanProduct(workspace);
-				buildTasks.push(buildingInstruction.buildProductTaskName);
-				cleanTasks.push(buildingInstruction.cleanProductTaskName);
 			}
 		}
-		workspace.addCompoundTask(this.buildTaskName, buildTasks);
-		workspace.addCompoundTask(this.cleanTaskName, cleanTasks);
 	}
 
 	// Convenience tasks

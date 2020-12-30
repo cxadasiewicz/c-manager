@@ -90,8 +90,6 @@ module.exports = class Workspace {
 	// Convenience tasks
 	installTaskName(section) { return ResourceIdentification.installTaskName(null, section); }
 	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(null, section); }
-	get buildTaskName() { return ResourceIdentification.buildTaskName() }
-	get cleanTaskName() { return ResourceIdentification.cleanTaskName() }
 
 	configureToInstallAndUninstallAll() {
 		const projects = Utilities.sortValuesBySortOrder(this.projects);
@@ -119,20 +117,8 @@ module.exports = class Workspace {
 		this.addCompoundTask(this.uninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
 	}
 
-	configureToBuildAndCleanAll() {
-		let buildTasks = [];
-		let cleanTasks = [];
-		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
-			buildTasks.push(project.buildTaskName);
-			cleanTasks.push(project.cleanTaskName);
-		}
-		this.addCompoundTask(this.buildTaskName, buildTasks);
-		this.addCompoundTask(this.cleanTaskName, cleanTasks);
-	}
-
 	configureConvenienceTasks() {
 		this.configureToInstallAndUninstallAll();
-		this.configureToBuildAndCleanAll();
 	}
 
 	// Managing debugging

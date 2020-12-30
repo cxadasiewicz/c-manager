@@ -24,13 +24,13 @@ module.exports = class BuildingInstruction {
 	}
 
 	// Configuring workspace tasks
-	get buildProductTaskName() { return ResourceIdentification.buildTaskName(this.parentProduct); }
-	get makeProductTaskName() { return ResourceIdentification.makeTaskName(this.parentProduct); }
-	get cleanProductTaskName() { return ResourceIdentification.cleanTaskName(this.parentProduct); }
+	get buildTaskName() { return ResourceIdentification.buildTaskName(this.parentProduct); }
+	get makeTaskName() { return ResourceIdentification.makeTaskName(this.parentProduct); }
+	get cleanTaskName() { return ResourceIdentification.cleanTaskName(this.parentProduct); }
 
 	configureWorkspaceToBuildAndCleanProduct(workspace) {
-		workspace.addShellTask(this.cleanProductTaskName, this.shellScriptToCleanBuild);
+		workspace.addShellTask(this.cleanTaskName, this.shellScriptToCleanBuild);
 		workspace.configureMakeTaskPlugins[this.makeTaskPluginName](workspace, this.parentProduct);
-		workspace.addCompoundTask(this.buildProductTaskName, [this.cleanProductTaskName, this.makeProductTaskName]);
+		workspace.addCompoundTask(this.buildTaskName, [this.cleanTaskName, this.makeTaskName]);
 	}
 };
