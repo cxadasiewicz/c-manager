@@ -1,7 +1,7 @@
 
 "use strict";
 
-const ResourceIdentifiers = require("./resource-identifiers");
+const ResourceIdentification = require("./resource-identification");
 const ShellScripting = require("./shell-scripting");
 
 
@@ -25,7 +25,7 @@ module.exports = class BuildingInstruction {
 	get shellScriptToUninstallBuild() {
 		let r = [];
 		r = r.concat(ShellScripting.removeDirectory(this.parentProduct.publicInstallPath));
-		r = r.concat(ShellScripting.removeEmptyDirectory(this.parentProduct.installPath + "/" + ResourceIdentifiers.buildFolder));
+		r = r.concat(ShellScripting.removeEmptyDirectory(this.parentProduct.installPath + "/" + ResourceIdentification.buildFolder));
 		return r;
 	}
 

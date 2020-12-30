@@ -2,14 +2,14 @@
 "use strict";
 
 const Bundle = require("./bundle");
-const ResourceIdentifiers = require("./resource-identifiers");
+const ResourceIdentification = require("./resource-identification");
 
 
 module.exports = class Library extends Bundle {
 
 	constructor() {
 		super();
-		this.localInstallFolder = ResourceIdentifiers.librariesFolder;
+		this.localInstallFolder = ResourceIdentification.librariesFolder;
 		this.libraryProject = null;
 	}
 	get descriptionOverrides() {

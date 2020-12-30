@@ -2,7 +2,7 @@
 "use strict";
 
 const Bundle = require("./bundle");
-const ResourceIdentifiers = require("./resource-identifiers");
+const ResourceIdentification = require("./resource-identification");
 const ShellScripting = require("./shell-scripting");
 
 
@@ -23,32 +23,14 @@ module.exports = class Project extends Bundle {
 		this.libraries[library.name] = library;
 	}
 
-	// Managing bundle references
-
-	static get bundleReferencePathPartSeparator() { return "."; }
-	static get bundleReferencePublicInterfaceSuffix() { return Project.bundleReferencePathPartSeparator + "public"; }
-
-	static bundleReferenceTargetsPublicInterface(reference) {
-		return reference.endsWith(Project.bundleReferencePublicInterfaceSuffix);
-	}
-	static pathOfBundleReference(reference) {
-		if (!Project.bundleReferenceTargetsPublicInterface(reference)) { return reference; }
-		return reference.substring(0, reference.length - Project.bundleReferencePublicInterfaceSuffix.length);
-	}
-	static partsOfBundleReferencePath(referencePath, limit = undefined) {
-		return referencePath.split(Project.bundleReferencePathPartSeparator, limit);
-	}
-	static finalPartOfBundleReference(reference) {
-		const r = Project.partsOfBundleReferencePath(Project.pathOfBundleReference(reference));
-		return r[r.length - 1];
-	}
+	// Dereferencing bundles
 
 	bundleReferencedAs(reference) {
-		const referencePath = Project.pathOfBundleReference(reference);
+		const referencePath = ResourceIdentification.pathOfBundleReference(reference);
 		let r;
 		r = this.products[referencePath];
 		if (r) { return r; }
-		const referencePathParts = Project.partsOfBundleReferencePath(referencePath, 2);
+		const referencePathParts = ResourceIdentification.partsOfBundleReferencePath(referencePath, 2);
 		const library = this.libraries[referencePathParts[0]];
 		if (library) {
 			if (referencePathParts.length == 1) {
@@ -65,7 +47,7 @@ module.exports = class Project extends Bundle {
 
 	// Getting resource addresses
 
-	get librariesInstallFolder() { return this.installPath + "/" + ResourceIdentifiers.librariesFolder; }
+	get librariesInstallFolder() { return this.installPath + "/" + ResourceIdentification.librariesFolder; }
 
 	// Generating installation scripts
 
@@ -113,40 +95,10 @@ module.exports = class Project extends Bundle {
 		}
 	}
 
-	// Installation conveniences
-	get installComponentsTaskName() { return "install_" + this.name; }
-	get uninstallComponentsTaskName() { return "uninstall_" + this.name; }
-
-	configureWorkspaceToInstallAndUninstallComponents(workspace) {
-		let includeLibraries = workspace.shouldOptionallyIncludeLibraries;
-		let includeProductImports = workspace.shouldOptionallyIncludeProductImports;
-		if (!includeLibraries && !includeProductImports) {
-			includeLibraries = true;
-			includeProductImports = true;
-		}
-		let installTasks = [];
-		if (includeLibraries) {
-			installTasks.push(this.installLibrariesTaskName);
-		}
-		if (includeProductImports) {
-			installTasks.push(this.installProductImportsTaskName);
-		}
-		workspace.addCompoundTask(this.installComponentsTaskName, installTasks);
-		let uninstallTasks = [];
-		if (includeProductImports) {
-			uninstallTasks.push(this.uninstallProductImportsTaskName);
-		}
-		if (includeLibraries) {
-			uninstallTasks.push(this.uninstallLibrariesTaskName);
-		}
-		workspace.addCompoundTask(this.uninstallComponentsTaskName, uninstallTasks);
-	}
-
 	// All tasks
 	configureWorkspaceTasks(workspace) {
 		this.configureWorkspaceToInstallLibraries(workspace);
 		this.configureWorkspaceToInstallProductImports(workspace);
 		this.configureWorkspaceToBuildProducts(workspace);
-		this.configureWorkspaceToInstallAndUninstallComponents(workspace);
 	}
 };

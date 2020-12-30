@@ -1,7 +1,7 @@
 
 "use strict";
 
-const ResourceIdentifiers = require("./resource-identifiers");
+const ResourceIdentification = require("./resource-identification");
 
 
 module.exports = class ImportLink {
@@ -22,10 +22,10 @@ module.exports = class ImportLink {
 
 	calculateAliasFolder() {
 		let r = this.aliasFolderReference;
-		if (r == ResourceIdentifiers.publicInterface || r.startsWith(ResourceIdentifiers.publicInterface + "/")) {
+		if (r == ResourceIdentification.publicInterfaceName || r.startsWith(ResourceIdentification.publicInterfaceName + "/")) {
 			const publicName = this.parentImport.parentProduct.publicName;
 			if (publicName) {
-				r = r.replace(ResourceIdentifiers.publicInterface, publicName);
+				r = r.replace(ResourceIdentification.publicInterfaceName, publicName);
 				if (r == publicName) {
 					r += "/";
 				}
@@ -42,7 +42,7 @@ module.exports = class ImportLink {
 
 	// Getting resource addresses
 
-	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + ResourceIdentifiers.productImportsFolder; }
+	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + ResourceIdentification.productImportsFolder; }
 	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.importedBundleName; }
 	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetSubpath; }
 };

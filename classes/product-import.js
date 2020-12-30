@@ -1,7 +1,7 @@
 
 "use strict";
 
-const Project = require("./project");
+const ResourceIdentification = require("./resource-identification");
 
 
 module.exports = class ProductImport {
@@ -24,8 +24,8 @@ module.exports = class ProductImport {
 		this.importLinks.push(importLink);
 	}
 
-	get importedBundleName() { return Project.finalPartOfBundleReference(this.importedBundleReference); }
-	get importedBundleTargetsPublicInterface() { return Project.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
+	get importedBundleName() { return ResourceIdentification.finalPartOfBundleReference(this.importedBundleReference); }
+	get importedBundleTargetsPublicInterface() { return ResourceIdentification.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
 
 	// Getting the imported bundle
 
