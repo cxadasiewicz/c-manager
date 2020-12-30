@@ -1,7 +1,7 @@
 
 "use strict";
 
-const FileLocations = require("./file-locations");
+const ResourceLocations = require("./resource-locations");
 const ShellScripting = require("./shell-scripting");
 
 
@@ -25,7 +25,7 @@ module.exports = class BuildingInstruction {
 	get shellScriptToUninstallBuild() {
 		let r = [];
 		r = r.concat(ShellScripting.removeDirectory(this.parentProduct.publicInstallPath));
-		r = r.concat(ShellScripting.removeEmptyDirectory(this.parentProduct.installPath + "/" + FileLocations.buildFolder));
+		r = r.concat(ShellScripting.removeEmptyDirectory(this.parentProduct.installPath + "/" + ResourceLocations.buildFolder));
 		return r;
 	}
 

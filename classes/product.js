@@ -2,7 +2,7 @@
 "use strict";
 
 const Bundle = require("./bundle");
-const FileLocations = require("./file-locations");
+const ResourceLocations = require("./resource-locations");
 const ShellScripting = require("./shell-scripting");
 
 
@@ -31,8 +31,8 @@ module.exports = class Product extends Bundle {
 
 	// Getting resource addresses
 
-	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? FileLocations.buildFolder : "") + this.publicName; }
-	get importsInstallFolder() { return this.installPath + "/" + FileLocations.importsFolder; }
+	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? ResourceLocations.buildFolder : "") + this.publicName; }
+	get importsInstallFolder() { return this.installPath + "/" + ResourceLocations.importsFolder; }
 
 	// Generating installation scripts
 

@@ -5,7 +5,7 @@ const BuildingInstruction = require("./classes/building-instruction");
 const Bundle = require("./classes/bundle");
 const ComponentsDecoder = require("./classes/components-decoder");
 const ComponentsJSONDecoder = require("./classes/components-json-decoder");
-const FileLocations = require("./classes/file-locations");
+const ResourceLocations = require("./classes/resource-locations");
 const GitHubLibrary = require("./classes/github-library");
 const GruntWorkspace = require("./classes/grunt-workspace");
 const ImportLink = require("./classes/import-link");
@@ -28,7 +28,7 @@ module.exports = class CManager {
 	static get Bundle() { return Bundle; }
 	static get ComponentsDecoder() { return ComponentsDecoder; }
 	static get ComponentsJSONDecoder() { return ComponentsJSONDecoder; }
-	static get FileLocations() { return FileLocations; }
+	static get ResourceLocations() { return ResourceLocations; }
 	static get GitHubLibrary() { return GitHubLibrary; }
 	static get GruntWorkspace() { return GruntWorkspace; }
 	static get ImportLink() { return ImportLink; }

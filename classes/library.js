@@ -2,14 +2,14 @@
 "use strict";
 
 const Bundle = require("./bundle");
-const FileLocations = require("./file-locations");
+const ResourceLocations = require("./resource-locations");
 
 
 module.exports = class Library extends Bundle {
 
 	constructor() {
 		super();
-		this.localInstallFolder = FileLocations.librariesFolder;
+		this.localInstallFolder = ResourceLocations.librariesFolder;
 		this.libraryProject = null;
 	}
 	get descriptionOverrides() {
