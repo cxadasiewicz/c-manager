@@ -10,6 +10,7 @@ module.exports = class ResourceIdentification {
 	static get buildName() { return "build"; }
 
 	static get publicInterfaceName() { return "public"; }
+	static get allComponentsName() { return "all"; }
 
 	// Global folders and paths
 	static get librariesFolder() { return this.librariesName + "/"; }
@@ -36,4 +37,16 @@ module.exports = class ResourceIdentification {
 		const r = this.partsOfBundleReferencePath(this.pathOfBundleReference(reference));
 		return r[r.length - 1];
 	}
+
+	// Workspace tasks
+	static get taskNameSeparator() { return "_"; }
+	static taskName(action, component, section) {
+		return action + this.taskNameSeparator + component.name + (section ? this.taskNameSeparator + section : "");
+	}
+
+	static installTaskName(component, section) { return this.taskName("install", component, section); }
+	static uninstallTaskName(component, section) { return this.taskName("uninstall", component, section); }
+	static buildTaskName(component) { return this.taskName("build", component); }
+	static makeTaskName(component) { return this.taskName("make", component); }
+	static cleanTaskName(component) { return this.taskName("clean", component); }
 };

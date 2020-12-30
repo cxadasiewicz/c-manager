@@ -81,54 +81,6 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	// Installation conveniences
-	installAllComponentsTaskName(section) {
-		return "install-all" + (section ? "-" + section : "");
-	}
-	configureToInstallAllComponents() {
-		let libraryTasks = [];
-		let productImportTasks = [];
-		for (const project of this.projects) {
-			libraryTasks.push(project.installComponentsTaskName(ResourceIdentification.librariesName));
-			productImportTasks.push(project.installComponentsTaskName(ResourceIdentification.productImportsName));
-		}
-		let allTasks = [];
-		let task;
-		task = this.installAllComponentsTaskName(ResourceIdentification.librariesName);
-		this.addCompoundTask(task, libraryTasks);
-		allTasks.push(task);
-		task = this.installAllComponentsTaskName(ResourceIdentification.productImportsName);
-		this.addCompoundTask(task, productImportTasks);
-		allTasks.push(task);
-		this.addCompoundTask(this.installAllComponentsTaskName(), allTasks);
-	}
-
-	uninstallAllComponentsTaskName(section) {
-		return "uninstall-all" + (section ? "-" + section : "");
-	}
-	configureToUninstallAllComponents() {
-		let buildTasks = [];
-		let productImportTasks = [];
-		let libraryTasks = [];
-		for (const project of this.projects) {
-			buildTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.buildName));
-			productImportTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.productImportsName));
-			libraryTasks.push(project.uninstallComponentsTaskName(ResourceIdentification.librariesName));
-		}
-		let allTasks = [];
-		let task;
-		task = this.uninstallAllComponentsTaskName(ResourceIdentification.buildName);
-		this.addCompoundTask(task, buildTasks);
-		allTasks.push(task);
-		task = this.uninstallAllComponentsTaskName(ResourceIdentification.productImportsName);
-		this.addCompoundTask(task, productImportTasks);
-		allTasks.push(task);
-		task = this.uninstallAllComponentsTaskName(ResourceIdentification.librariesName);
-		this.addCompoundTask(task, libraryTasks);
-		allTasks.push(task);
-		this.addCompoundTask(this.uninstallAllComponentsTaskName(), allTasks);
-	}
-
 	configureToInstallAndUninstallAllComponents() {
 		this.configureToInstallAllComponents()
 		this.configureToUninstallAllComponents();
@@ -152,7 +104,6 @@ module.exports = class Workspace {
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
 		}
-		this.configureToInstallAndUninstallAllComponents();
 		this.runDebugging();
 	}
 };
