@@ -46,7 +46,7 @@ module.exports = class Product extends Bundle {
 		if (productImports.length) {
 			r = r.concat(ShellScripting.ensureDirectory(this.productImportsInstallFolder));
 			for (const productImport of productImports) {
-				if (productImport.importedBundleTargetsPublicInterface) {
+				if (productImport.importedBundleIsProductBuild) {
 					r = r.concat(ShellScripting.ensureDirectory(productImport.importedBundle.publicInstallPath));
 				}
 				r = r.concat(ShellScripting.removeFile(productImport.aliasInstallPath));

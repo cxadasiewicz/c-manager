@@ -26,7 +26,7 @@ module.exports = class ProductImport {
 	}
 
 	get importedBundleName() { return ResourceIdentification.finalPartOfBundleReference(this.importedBundleReference); }
-	get importedBundleTargetsPublicInterface() { return ResourceIdentification.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
+	get importedBundleReferenceTargetsPublicInterface() { return ResourceIdentification.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
 
 	// Getting the imported bundle
 
@@ -40,8 +40,16 @@ module.exports = class ProductImport {
 		return this._importedBundleCache;
 	}
 
+	get importedBundleIsProductBuild() {
+		const importedBundle = this.importedBundle;
+		if (importedBundle) {
+			return importedBundle.buildingInstruction && this.importedBundleReferenceTargetsPublicInterface;
+		}
+		return false;
+	}
+
 	// Getting resource addresses
 
 	get aliasInstallPath() { return this.parentProduct.productImportsInstallFolder + this.importedBundleName; }
-	get targetInstallPath() { return (!this.importedBundleTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
+	get targetInstallPath() { return (!this.importedBundleReferenceTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 };
