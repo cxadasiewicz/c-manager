@@ -86,19 +86,24 @@ module.exports = class Project extends Bundle {
 	}
 
 	// Building products
-	configureWorkspaceToBuildProducts(workspace) {
+	get uninstallBuildTaskName() { return "uninstall_" + this.name + "_build"; }
+
+	configureWorkspaceToBuildProductsAndUninstallBuild(workspace) {
+		let uninstallTasks = [];
 		for (const product of Object.values(this.products)) {
 			const buildingInstruction = product.buildingInstruction;
 			if (buildingInstruction) {
-				buildingInstruction.configureWorkspaceToBuildProduct(workspace);
+				buildingInstruction.configureWorkspaceToBuildProductAndUninstallBuild(workspace);
+				uninstallTasks.push(buildingInstruction.uninstallBuildTaskName);
 			}
 		}
+		workspace.addCompoundTask(this.uninstallBuildTaskName, uninstallTasks);
 	}
 
 	// All tasks
 	configureWorkspaceTasks(workspace) {
 		this.configureWorkspaceToInstallLibraries(workspace);
 		this.configureWorkspaceToInstallProductImports(workspace);
-		this.configureWorkspaceToBuildProducts(workspace);
+		this.configureWorkspaceToBuildProductsAndUninstallBuild(workspace);
 	}
 };

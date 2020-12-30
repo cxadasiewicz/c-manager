@@ -32,7 +32,7 @@ module.exports = class Product extends Bundle {
 	// Getting resource addresses
 
 	get publicInstallPath() { return this.installPath + "/" + (this.buildingInstruction ? ResourceIdentification.buildFolder : "") + this.publicName; }
-	get importsInstallFolder() { return this.installPath + "/" + ResourceIdentification.productImportsFolder; }
+	get productImportsInstallFolder() { return this.installPath + "/" + ResourceIdentification.productImportsFolder; }
 
 	// Generating installation scripts
 
@@ -40,7 +40,7 @@ module.exports = class Product extends Bundle {
 		let r = [];
 		const productImports = Object.values(this.productImports);
 		if (productImports.length) {
-			r = r.concat(ShellScripting.ensureDirectory(this.importsInstallFolder));
+			r = r.concat(ShellScripting.ensureDirectory(this.productImportsInstallFolder));
 			for (const productImport of productImports) {
 				if (productImport.importedBundleTargetsPublicInterface) {
 					r = r.concat(ShellScripting.ensureDirectory(productImport.importedBundle.publicInstallPath));
@@ -58,7 +58,7 @@ module.exports = class Product extends Bundle {
 	}
 	get shellScriptToUninstallProductImports() {
 		let r = [];
-		r = r.concat(ShellScripting.removeDirectory(this.importsInstallFolder));
+		r = r.concat(ShellScripting.removeDirectory(this.productImportsInstallFolder));
 		for (const productImport of Object.values(this.productImports)) {
 			for (const importLink of productImport.importLinks) {
 				r = r.concat(ShellScripting.removeDirectory(importLink.aliasInstallFolder));

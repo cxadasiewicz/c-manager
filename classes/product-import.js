@@ -41,6 +41,6 @@ module.exports = class ProductImport {
 
 	// Getting resource addresses
 
-	get aliasInstallPath() { return this.parentProduct.importsInstallFolder + this.importedBundleName; }
+	get aliasInstallPath() { return this.parentProduct.productImportsInstallFolder + this.importedBundleName; }
 	get targetInstallPath() { return (!this.importedBundleTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 };

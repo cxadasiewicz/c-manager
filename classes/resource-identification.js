@@ -13,7 +13,7 @@ module.exports = class ResourceIdentification {
 
 	// Global folders and paths
 	static get librariesFolder() { return this.librariesName + "/"; }
-	static get productImportsFolder() { return this.importsName + "/"; }
+	static get productImportsFolder() { return this.productImportsName + "/"; }
 	static get buildFolder() { return this.buildName + "/"; }
 
 	static get packageJSONPath() { return "package.json"; }

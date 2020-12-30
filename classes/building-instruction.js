@@ -34,12 +34,12 @@ module.exports = class BuildingInstruction {
 	get makeProductTaskName() { return "make_" + this.parentProduct.name; }
 	get buildProductTaskName() { return "build_" + this.parentProduct.name; }
 	get cleanProductTaskName() { return "clean_" + this.parentProduct.name; }
-	get uninstallProductTaskName() { return "uninstall_" + this.parentProduct.name; }
+	get uninstallBuildTaskName() { return "uninstall_" + this.parentProduct.name + "_build"; }
 
-	configureWorkspaceToBuildProduct(workspace) {
+	configureWorkspaceToBuildProductAndUninstallBuild(workspace) {
 		workspace.addShellTask(this.cleanProductTaskName, this.shellScriptToCleanBuild);
 		workspace.configureMakeTaskPlugins[this.makeTaskPluginName](workspace, this.parentProduct);
 		workspace.addCompoundTask(this.buildProductTaskName, [this.cleanProductTaskName, this.makeProductTaskName]);
-		workspace.addShellTask(this.uninstallProductTaskName, this.shellScriptToUninstallBuild);
+		workspace.addShellTask(this.uninstallBuildTaskName, this.shellScriptToUninstallBuild);
 	}
 };
