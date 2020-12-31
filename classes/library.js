@@ -9,7 +9,6 @@ module.exports = class Library extends Bundle {
 
 	constructor() {
 		super();
-		this.sortOrder = 0;
 		this.localInstallFolder = ResourceIdentification.librariesFolder;
 		this.libraryProject = null;
 	}

@@ -4,14 +4,12 @@
 const Bundle = require("./bundle");
 const ResourceIdentification = require("./resource-identification");
 const ShellScripting = require("./shell-scripting");
-const Utilities = require("./utilities");
 
 
 module.exports = class Product extends Bundle {
 
 	constructor() {
 		super();
-		this.sortOrder = 0;
 		this.publicName = "";
 		this.productImports = {};
 		this.buildingInstruction = null;
@@ -20,7 +18,6 @@ module.exports = class Product extends Bundle {
 
 	addProductImport(productImport) {
 		productImport.parentProduct = this;
-		productImport.sortOrder = Object.keys(this.productImports).length;
 		this.productImports[productImport.importedBundleReference] = productImport;
 	}
 	setBuildingInstruction(buildingInstruction) {
@@ -42,7 +39,7 @@ module.exports = class Product extends Bundle {
 
 	get shellScriptToInstallProductImports() {
 		let r = [];
-		for (const productImport of Utilities.sortValuesBySortOrder(this.productImports)) {
+		for (const productImport of Object.values(this.productImports)) {
 			r = r.concat(productImport.shellScriptToInstallProductImport);
 		}
 		return r;
@@ -50,7 +47,7 @@ module.exports = class Product extends Bundle {
 	get shellScriptToUninstallProductImports() {
 		let r = [];
 		r = r.concat(ShellScripting.removeDirectory(this.productImportsInstallFolder));
-		for (const productImport of Utilities.sortValuesBySortOrder(this.productImports).reverse()) {
+		for (const productImport of Object.values(this.productImports)) {
 			r = r.concat(productImport.shellScriptToUninstallProductImport);
 		}
 		return r;

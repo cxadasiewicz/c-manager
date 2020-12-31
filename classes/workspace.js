@@ -5,7 +5,6 @@ const ComponentsJSONDecoder = require("./components-json-decoder");
 const Logger = require("./logger");
 const Project = require("./project");
 const ResourceIdentification = require("./resource-identification");
-const Utilities = require("./utilities");
 
 
 module.exports = class Workspace {
@@ -14,7 +13,7 @@ module.exports = class Workspace {
 
 	constructor(configureMakeTaskPlugins = {}) {
 		this.configureMakeTaskPlugins = configureMakeTaskPlugins;
-		this.projects = {};
+		this.projects = [];
 	}
 	get descriptionOverrides() {
 		return {
@@ -23,8 +22,7 @@ module.exports = class Workspace {
 	}
 
 	addProject(project) {
-		project.sortOrder = Object.keys(this.projects).length;
-		this.projects[project.name] = project;
+		this.projects.push(project);
 	}
 
 	// Managing files
@@ -96,10 +94,9 @@ module.exports = class Workspace {
 	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(null, section); }
 
 	configureToInstallAndUninstallAll() {
-		const projects = Utilities.sortValuesBySortOrder(this.projects);
 		let libraryInstallTasks = [];
 		let productImportInstallTasks = [];
-		for (const project of projects) {
+		for (const project of this.projects) {
 			libraryInstallTasks.push(project.installTaskName(ResourceIdentification.librariesName));
 			productImportInstallTasks.push(project.installTaskName(ResourceIdentification.productImportsName))
 		}
@@ -110,7 +107,7 @@ module.exports = class Workspace {
 		this.addCompoundTask(this.installTaskName(), [installLibrariesTask, installProductImportsTask]);
 		let libraryUninstallTasks = [];
 		let productImportUninstallTasks = [];
-		for (const project of projects.slice().reverse()) {
+		for (const project of this.projects.slice().reverse()) {
 			libraryUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.librariesName));
 			productImportUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.productImportsName))
 		}
@@ -140,7 +137,7 @@ module.exports = class Workspace {
 	discoverProjectsAndConfigureTasks(decoder = new ComponentsJSONDecoder()) {
 		this.discoverProjectsUsingDecoder(decoder);
 		this.beginConfiguringTasks();
-		for (const project of Utilities.sortValuesBySortOrder(this.projects)) {
+		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);
 		}
 		this.configureConvenienceTasks();

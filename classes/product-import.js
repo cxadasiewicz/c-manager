@@ -9,9 +9,8 @@ module.exports = class ProductImport {
 
 	constructor() {
 		this.parentProduct = null;
-		this.sortOrder = 0;
 		this.importedBundleReference = "";
-		this.importLinks = [];
+		this.importLinks = {};
 		this._importedBundleCache = undefined;
 	}
 	get descriptionOverrides() {
@@ -23,7 +22,7 @@ module.exports = class ProductImport {
 
 	addImportLink(importLink) {
 		importLink.parentImport = this;
-		this.importLinks.push(importLink);
+		this.importLinks[importLink.aliasFolderReference] = importLink;
 	}
 
 	get importedBundleName() { return ResourceIdentification.finalPartOfBundleReference(this.importedBundleReference); }
@@ -67,14 +66,14 @@ module.exports = class ProductImport {
 			this.aliasFolder,
 			this.targetInstallPath
 		));
-		for (const importLink of this.importLinks) {
+		for (const importLink of Object.values(this.importLinks)) {
 			r = r.concat(importLink.shellScriptToInstallImportLink);
 		}
 		return r;
 	}
 	get shellScriptToUninstallProductImport() {
 		let r = [];
-		for (const importLink of this.importLinks) {
+		for (const importLink of Object.values(this.importLinks)) {
 			r = r.concat(importLink.shellScriptToUninstallImportLink);
 		}
 		return r;

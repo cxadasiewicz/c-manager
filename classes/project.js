@@ -4,14 +4,12 @@
 const Bundle = require("./bundle");
 const ResourceIdentification = require("./resource-identification");
 const ShellScripting = require("./shell-scripting");
-const Utilities = require("./utilities");
 
 
 module.exports = class Project extends Bundle {
 
 	constructor() {
 		super();
-		this.sortOrder = 0;
 		this.products = {};
 		this.libraries = {};
 	}
@@ -19,12 +17,10 @@ module.exports = class Project extends Bundle {
 
 	addProduct(product) {
 		product.parentBundle = this;
-		product.sortOrder = Object.keys(this.products).length;
 		this.products[product.name] = product;
 	}
 	addLibrary(library) {
 		library.parentBundle = this;
-		library.sortOrder = Object.keys(this.libraries).length;
 		this.libraries[library.name] = library;
 	}
 
@@ -68,7 +64,7 @@ module.exports = class Project extends Bundle {
 	// Installing and uninstalling libraries
 	configureWorkspaceToInstallAndUninstallLibraries(workspace) {
 		let installScript = [];
-		for (const library of Utilities.sortValuesBySortOrder(this.libraries)) {
+		for (const library of Object.values(this.libraries)) {
 			installScript = installScript.concat(library.shellScriptToInstallLibrary);
 		}
 		workspace.addShellTask(this.installTaskName(ResourceIdentification.librariesName), installScript);
@@ -77,22 +73,19 @@ module.exports = class Project extends Bundle {
 
 	// Installing and uninstalling product imports
 	configureWorkspaceToInstallAndUninstallProductImports(workspace) {
-		const products = Utilities.sortValuesBySortOrder(this.products);
 		let installScript = [];
-		for (const product of products) {
-			installScript = installScript.concat(product.shellScriptToInstallProductImports);
-		}
-		workspace.addShellTask(this.installTaskName(ResourceIdentification.productImportsName), installScript);
 		let uninstallScript = [];
-		for (const product of products.slice().reverse()) {
+		for (const product of Object.values(this.products)) {
+			installScript = installScript.concat(product.shellScriptToInstallProductImports);
 			uninstallScript = uninstallScript.concat(product.shellScriptToUninstallProductImports);
 		}
+		workspace.addShellTask(this.installTaskName(ResourceIdentification.productImportsName), installScript);
 		workspace.addShellTask(this.uninstallTaskName(ResourceIdentification.productImportsName), uninstallScript);
 	}
 
 	// Building and cleaning products
 	configureWorkspaceToBuildAndCleanProducts(workspace) {
-		for (const product of Utilities.sortValuesBySortOrder(this.products)) {
+		for (const product of Object.values(this.products)) {
 			const buildingInstruction = product.buildingInstruction;
 			if (buildingInstruction) {
 				buildingInstruction.configureWorkspaceToBuildAndCleanProduct(workspace);

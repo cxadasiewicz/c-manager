@@ -18,7 +18,6 @@ const ProductImport = require("./classes/product-import");
 const Product = require("./classes/product");
 const Project = require("./classes/project");
 const ShellScripting = require("./classes/shell-scripting");
-const Utilities = require("./classes/utilities");
 const Workspace = require("./classes/workspace");
 
 
@@ -43,7 +42,6 @@ module.exports = class CManager {
 	static get Product() { return Product; }
 	static get Project() { return Project; }
 	static get ShellScripting() { return ShellScripting; }
-	static get Utilities() { return Utilities; }
 	static get Workspace() { return Workspace; }
 
 	static configureGruntForComponents(grunt, makefuncs) {
