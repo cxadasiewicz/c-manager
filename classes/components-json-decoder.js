@@ -37,17 +37,17 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	addProductsDataToProject(data, project) {
 		if (!data) { return }
 		for (const [productKey, productData] of Object.entries(data)) {
-			const product = new Product();
-			product.name = this.resolveVariables(productKey);
-			product.localInstallFolder = this.resolveVariables(productData[ComponentsJSONDecoder._productLocalInstallFolder]);
-			product.publicName = this.resolveVariables(productData[ComponentsJSONDecoder._productPublicName]);
+			const product = project.addProduct(new Product({
+				name: this.resolveVariables(productKey),
+				localInstallFolder: this.resolveVariables(productData[ComponentsJSONDecoder._productLocalInstallFolder]),
+				publicName: this.resolveVariables(productData[ComponentsJSONDecoder._productPublicName]),
+			}));
 			const buildData = productData[ComponentsJSONDecoder._productBuildingInstruction];
 			if (buildData) {
-				const buildingInstruction = new BuildingInstruction();
-				buildingInstruction.makeTaskPluginName = this.resolveVariables(buildData);
-				product.setBuildingInstruction(buildingInstruction);
+				product.setBuildingInstruction(new BuildingInstruction({
+					makeTaskPluginName: this.resolveVariables(buildData)
+				}));
 			}
-			project.addProduct(product);
 		}
 	}
 
@@ -55,23 +55,27 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	addLibrariesDataToProject(data, project) {
 		if (!data) { return }
 		for (const [libraryKey, librarySpec] of Object.entries(data)) {
+			const libraryName = this.resolveVariables(libraryKey);
 			const librarySpecParts = this.resolveVariables(librarySpec).split(ComponentsJSONDecoder._specSeparator);
 			let library;
 			switch (librarySpecParts[0]) {
 			case ComponentsJSONDecoder._gitHubLibrary:
-				library = new GitHubLibrary();
-				library.publisherUsername = librarySpecParts[1];
-				library.publishedBundleName = librarySpecParts[2];
-				library.version = librarySpecParts[3];
-				library.publishedTagPrefix = (librarySpecParts.length > 4 ? librarySpecParts[4] : "");
-				library.oauthToken = (librarySpecParts.length > 5 ? librarySpecParts[5] : "");
+				library = new GitHubLibrary({
+					name: libraryName,
+					publisherUsername: librarySpecParts[1],
+					publishedBundleName: librarySpecParts[2],
+					version: librarySpecParts[3],
+					publishedTagPrefix: (librarySpecParts.length > 4 ? librarySpecParts[4] : ""),
+					oauthToken: (librarySpecParts.length > 5 ? librarySpecParts[5] : "")
+				});
 				break;
 			case ComponentsJSONDecoder._deviceLibrary:
-				library = new DeviceLibrary();
-				library.publishedBundlePath = librarySpecParts[1];
+				library = new DeviceLibrary({
+					name: libraryName,
+					publishedBundleLocalInstallPath: librarySpecParts[1]
+				});
 				break;
 			}
-			library.name = this.resolveVariables(libraryKey);
 			project.addLibrary(library);
 		}
 	}
@@ -82,15 +86,15 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 		for (const [productKey, productData] of Object.entries(data)) {
 			const product = project.products[this.resolveVariables(productKey)];
 			for (const [importKey, productImportData] of Object.entries(productData)) {
-				const productImport = new ProductImport();
-				productImport.importedBundleReference = this.resolveVariables(importKey);
+				const productImport = product.addProductImport(new ProductImport({
+					importedBundleReference: this.resolveVariables(importKey)
+				}));
 				for (const [aliasKey, sourceSubpath] of Object.entries(productImportData)) {
-					const importLink = new ImportLink();
-					importLink.aliasFolderReference = this.resolveVariables(aliasKey);
-					importLink.sourceSubpath = this.resolveVariables(sourceSubpath);
-					productImport.addImportLink(importLink);
+					productImport.addImportLink(new ImportLink({
+						aliasFolderReference: this.resolveVariables(aliasKey),
+						sourceSubpath: this.resolveVariables(sourceSubpath)
+					}));
 				}
-				product.addProductImport(productImport);
 			}
 		}
 	}

@@ -8,20 +8,21 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class Project extends Bundle {
 
-	constructor() {
-		super();
+	constructor(config) {
+		super(config);
 		this.products = {};
 		this.libraries = {};
 	}
-	get descriptionTypeSuffix() { return "project"; }
 
 	addProduct(product) {
 		product.parentBundle = this;
 		this.products[product.name] = product;
+		return product;
 	}
 	addLibrary(library) {
 		library.parentBundle = this;
 		this.libraries[library.name] = library;
+		return library;
 	}
 
 	// Dereferencing bundles

@@ -7,10 +7,10 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class ImportLink {
 
-	constructor() {
+	constructor(config) {
 		this.parentImport = null;
-		this.aliasFolderReference = "";
-		this.sourceSubpath = "";
+		this.aliasFolderReference = config.aliasFolderReference;
+		this.sourceSubpath = config.sourceSubpath;
 		this._aliasFolderCache = undefined;
 	}
 	get descriptionOverrides() {

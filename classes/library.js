@@ -7,9 +7,11 @@ const ResourceIdentification = require("./resource-identification");
 
 module.exports = class Library extends Bundle {
 
-	constructor() {
-		super();
-		this.localInstallFolder = ResourceIdentification.librariesFolder;
+	constructor(config) {
+		super({
+			name: config.name,
+			localInstallFolder: ResourceIdentification.librariesFolder
+		});
 		this.libraryProject = null;
 	}
 	get descriptionOverrides() {
@@ -17,7 +19,6 @@ module.exports = class Library extends Bundle {
 		r["libraryProject"] = (this.libraryProject ? this.libraryProject.name : null);
 		return r;
 	}
-	get descriptionTypeSuffix() { return "library"; }
 
 	get parentProject() { return this.parentBundle; }
 

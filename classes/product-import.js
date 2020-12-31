@@ -7,9 +7,9 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class ProductImport {
 
-	constructor() {
+	constructor(config) {
 		this.parentProduct = null;
-		this.importedBundleReference = "";
+		this.importedBundleReference = config.importedBundleReference;
 		this.importLinks = {};
 		this._importedBundleCache = undefined;
 	}
@@ -23,6 +23,7 @@ module.exports = class ProductImport {
 	addImportLink(importLink) {
 		importLink.parentImport = this;
 		this.importLinks[importLink.aliasFolderReference] = importLink;
+		return importLink;
 	}
 
 	get importedBundleName() { return ResourceIdentification.finalPartOfBundleReference(this.importedBundleReference); }

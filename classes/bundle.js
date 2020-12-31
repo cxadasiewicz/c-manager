@@ -4,10 +4,10 @@
 
 module.exports = class Bundle {
 
-	constructor() {
-		this.name = "";
-		this.localInstallFolder = "";
-		this.parentBundle = null;
+	constructor(config) {
+		this.name = config.name;
+		this.localInstallFolder = config.localInstallFolder;
+		this.parentBundle = config.parentBundle;
 	}
 	get descriptionOverrides() {
 		return {
@@ -17,7 +17,10 @@ module.exports = class Bundle {
 
 	// Getting resource addresses
 
+	get localInstallPath() { return this.localInstallFolder + this.name; }
+
 	get installFolder() { return (this.parentBundle ? this.parentBundle.installPath + "/" : "") + this.localInstallFolder; }
 	get installPath() { return this.installFolder + this.name; }
+
 	get publicInstallPath() { return this.installPath; }
 };

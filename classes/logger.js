@@ -35,12 +35,7 @@ module.exports = class Logger {
 					} else {
 						rr = object[key];
 					}
-					let typeSuffix;
-					if (rr) {
-						typeSuffix = rr.descriptionTypeSuffix;
-					}
-					typeSuffix = (typeSuffix ? ": " + typeSuffix : "");
-					r[key + typeSuffix] = this.description(rr);
+					r[key] = this.description(rr);
 				}
 			}
 		}

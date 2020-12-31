@@ -7,9 +7,9 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class BuildingInstruction {
 
-	constructor() {
+	constructor(config) {
 		this.parentProduct = null;
-		this.makeTaskPluginName = "";
+		this.makeTaskPluginName = config.makeTaskPluginName;
 	}
 	get descriptionOverrides() {
 		return {

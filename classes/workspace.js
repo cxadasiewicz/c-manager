@@ -21,10 +21,6 @@ module.exports = class Workspace {
 		};
 	}
 
-	addProject(project) {
-		this.projects.push(project);
-	}
-
 	// Getting workspace options
 
 	workspaceOption(option) {
@@ -44,42 +40,53 @@ module.exports = class Workspace {
 		}
 	}
 
-	// Managing projects
+	// Collecting projects
 
-	decodeAnyProjectAt(localBundlePath, parentProject, decoder) {
-		const packageJSONLocalInstallFolder = (!localBundlePath ? "" : localBundlePath + "/");
-		const packageData = this.readJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + ResourceIdentification.packageJSONPath);
+	collectAnyProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
+		const intermediateFolder = (projectSubpath ? projectSubpath + "/" : "");
+		const packageData = this.readJSONAt((parentProject ? parentProject.installPath + "/" : "") + intermediateFolder + ResourceIdentification.packageJSONPath);
 		if (!packageData) { return null; }
 		const componentsData = decoder.componentsDataFrom(packageData);
 		if (!componentsData) { return null; }
-		const r = new Project();
-		r.name = packageData.name;
-		r.localInstallFolder = packageJSONLocalInstallFolder + "../";
-		r.parentBundle = parentProject;
+		const r = new Project({
+			name: packageData.name,
+			localInstallFolder: intermediateFolder + "../",
+			parentBundle: parentProject
+		});
 		decoder.addComponentsDataToProject(componentsData, r);
-		this.addProject(r);
 		return r;
 	}
 
-	discoverProjectsUsingDecoder(decoder) {
-		let project = this.decodeAnyProjectAt(null, null, decoder);
-		if (!project) { return; }
-		let projectQueue = [];
-		while (project) {
-			for (const libraryKey of Object.keys(project.libraries)) {
-				const library = project.libraries[libraryKey];
-				let libraryPath = library.deviceBundlePath;
-				if (!libraryPath) {
-					libraryPath = ResourceIdentification.librariesFolder + libraryKey;
+	collectProjectsInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
+		let r = [];
+		let project = this.collectAnyProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder);
+		if (project) {
+			r.push(project);
+			let projectQueue = [];
+			while (project) {
+				for (const library of Object.values(project.libraries)) {
+					let libraryPath = library.deviceLocalInstallPath;
+					if (!libraryPath) {
+						libraryPath = library.localInstallPath;
+					}
+					const libraryProject = this.collectAnyProjectInProjectAtSubpathUsingDecoder(project, libraryPath, decoder);
+					if (libraryProject) {
+						library.libraryProject = libraryProject;
+						r.push(libraryProject);
+						projectQueue.push(libraryProject);
+					}
 				}
-				const libraryProject = this.decodeAnyProjectAt(project.installPath + "/" + libraryPath, project, decoder);
-				if (libraryProject) {
-					library.libraryProject = libraryProject;
-					projectQueue.push(libraryProject);
-				}
+				project = projectQueue.pop();
 			}
-			project = projectQueue.pop();
 		}
+		return r;
+	}
+	collectProjectsUsingDecoder(decoder) {
+		return this.collectProjectsInProjectAtSubpathUsingDecoder(null, null, decoder);
+	}
+
+	collectProjects() {
+		this.projects = this.collectProjectsUsingDecoder(new ComponentsJSONDecoder());
 	}
 
 	// Configuring tasks
@@ -135,7 +142,7 @@ module.exports = class Workspace {
 	// Running the main operation
 
 	discoverProjectsAndConfigureTasks(decoder = new ComponentsJSONDecoder()) {
-		this.discoverProjectsUsingDecoder(decoder);
+		this.collectProjects();
 		this.beginConfiguringTasks();
 		for (const project of this.projects) {
 			project.configureWorkspaceTasks(this);

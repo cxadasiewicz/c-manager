@@ -6,11 +6,11 @@ const CloudLibrary = require("./cloud-library");
 
 module.exports = class GitHubLibrary extends CloudLibrary {
 
-	constructor() {
-		super();
-		this.publisherUsername = "";
-		this.publishedTagPrefix = "";
-		this.oauthToken = "";
+	constructor(config) {
+		super(config);
+		this.publisherUsername = config.publisherUsername;
+		this.publishedTagPrefix = config.publishedTagPrefix;
+		this.oauthToken = config.oauthToken;
 	}
 
 	// Getting resource addresses

@@ -7,10 +7,10 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class CloudLibrary extends Library {
 
-	constructor() {
-		super();
-		this.publishedBundleName = "";
-		this.version = "";
+	constructor(config) {
+		super(config);
+		this.publishedBundleName = config.publishedBundleName;
+		this.version = config.version;
 	}
 
 	// Getting resource addresses

@@ -8,17 +8,17 @@ const ShellScripting = require("./shell-scripting");
 
 module.exports = class Product extends Bundle {
 
-	constructor() {
-		super();
-		this.publicName = "";
+	constructor(config) {
+		super(config);
+		this.publicName = config.publicName;
 		this.productImports = {};
 		this.buildingInstruction = null;
 	}
-	get descriptionTypeSuffix() { return "product"; }
 
 	addProductImport(productImport) {
 		productImport.parentProduct = this;
 		this.productImports[productImport.importedBundleReference] = productImport;
+		return productImport;
 	}
 	setBuildingInstruction(buildingInstruction) {
 		if (this.buildingInstruction) {
