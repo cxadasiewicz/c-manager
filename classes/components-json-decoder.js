@@ -12,20 +12,20 @@ const Product = require("./product");
 
 module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 
-	static get _components() { return "components"; }
+	static get componentsKey() { return "components"; }
 
-	static get _variables() { return "variables"; }
+	static get variablesKey() { return "variables"; }
 
-	static get _products() { return "products"; }
-	static get _productLocalInstallFolder() { return "install"; }
-	static get _productPublicName() { return "public"; }
-	static get _productBuildingInstruction() { return "build"; }
+	static get productsKey() { return "products"; }
+	static get productLocalInstallFolderKey() { return "install"; }
+	static get productPublicNameKey() { return "public"; }
+	static get productBuildingInstructionKey() { return "build"; }
 
-	static get _libraries() { return "libraries"; }
-	static get _gitHubLibrary() { return "github"; }
-	static get _deviceLibrary() { return "point"; }
+	static get librariesKey() { return "libraries"; }
+	static get gitHubLibraryOption() { return "github"; }
+	static get deviceLibraryOption() { return "point"; }
 
-	static get _productImports() { return "imports"; }
+	static get productImportsKey() { return "imports"; }
 
 	constructor() {
 		super();
@@ -39,10 +39,10 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 		for (const [productKey, productData] of Object.entries(data)) {
 			const product = project.addProduct(new Product({
 				name: this.resolveVariables(productKey),
-				localInstallFolder: this.resolveVariables(productData[ComponentsJSONDecoder._productLocalInstallFolder]),
-				publicName: this.resolveVariables(productData[ComponentsJSONDecoder._productPublicName]),
+				localInstallFolder: this.resolveVariables(productData[ComponentsJSONDecoder.productLocalInstallFolderKey]),
+				publicName: this.resolveVariables(productData[ComponentsJSONDecoder.productPublicNameKey]),
 			}));
-			const buildData = productData[ComponentsJSONDecoder._productBuildingInstruction];
+			const buildData = productData[ComponentsJSONDecoder.productBuildingInstructionKey];
 			if (buildData) {
 				product.setBuildingInstruction(new BuildingInstruction({
 					makeTaskPluginName: this.resolveVariables(buildData)
@@ -56,10 +56,10 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 		if (!data) { return }
 		for (const [libraryKey, librarySpec] of Object.entries(data)) {
 			const libraryName = this.resolveVariables(libraryKey);
-			const librarySpecParts = this.resolveVariables(librarySpec).split(ComponentsJSONDecoder._specSeparator);
+			const librarySpecParts = this.resolveVariables(librarySpec).split(ComponentsJSONDecoder.specSeparator);
 			let library;
 			switch (librarySpecParts[0]) {
-			case ComponentsJSONDecoder._gitHubLibrary:
+			case ComponentsJSONDecoder.gitHubLibraryOption:
 				library = new GitHubLibrary({
 					name: libraryName,
 					publisherUsername: librarySpecParts[1],
@@ -69,7 +69,7 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 					oauthToken: (librarySpecParts.length > 5 ? librarySpecParts[5] : "")
 				});
 				break;
-			case ComponentsJSONDecoder._deviceLibrary:
+			case ComponentsJSONDecoder.deviceLibraryOption:
 				library = new DeviceLibrary({
 					name: libraryName,
 					publishedBundleLocalInstallPath: librarySpecParts[1]
@@ -102,12 +102,12 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	// Decoding components
 
 	componentsDataFrom(data) {
-		return (data ? data[ComponentsJSONDecoder._components] : null);
+		return (data ? data[ComponentsJSONDecoder.componentsKey] : null);
 	}
 	addComponentsDataToProject(data, project) {
-		this.addVariablesData(data[ComponentsJSONDecoder._variables]);
-		this.addProductsDataToProject(data[ComponentsJSONDecoder._products], project);
-		this.addLibrariesDataToProject(data[ComponentsJSONDecoder._libraries], project);
-		this.addProductImportsDataToProject(data[ComponentsJSONDecoder._productImports], project);
+		this.addVariablesData(data[ComponentsJSONDecoder.variablesKey]);
+		this.addProductsDataToProject(data[ComponentsJSONDecoder.productsKey], project);
+		this.addLibrariesDataToProject(data[ComponentsJSONDecoder.librariesKey], project);
+		this.addProductImportsDataToProject(data[ComponentsJSONDecoder.productImportsKey], project);
 	}
 };

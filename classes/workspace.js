@@ -9,7 +9,7 @@ const ResourceIdentification = require("./resource-identification");
 
 module.exports = class Workspace {
 
-	static get _debugWorkspaceOption() { return "debug-workspace"; }
+	static get debugWorkspaceOption() { return "debug-workspace"; }
 
 	constructor(configureMakeTaskPlugins = {}) {
 		this.configureMakeTaskPlugins = configureMakeTaskPlugins;
@@ -131,7 +131,7 @@ module.exports = class Workspace {
 
 	// Managing debugging
 
-	get shouldDebugWorkspace() { return this.workspaceOption(Workspace._debugWorkspaceOption); }
+	get shouldDebugWorkspace() { return this.workspaceOption(Workspace.debugWorkspaceOption); }
 
 	runDebugging() {
 		if (this.shouldDebugWorkspace) {
