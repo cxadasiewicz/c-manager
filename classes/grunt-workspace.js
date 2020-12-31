@@ -19,16 +19,16 @@ module.exports = class GruntWorkspace extends Workspace {
 		return r;
 	}
 
-	// Accessing files
-
-	readJSONAt(path) {
-		return this.grunt.file.readJSON(path);
-	}
-
 	// Getting workspace options
 
 	workspaceOption(option) {
 		return this.grunt.option(option);
+	}
+
+	// Reading files
+
+	tryReadingJSONAt(path) {
+		return this.grunt.file.readJSON(path);
 	}
 
 	// Configuring tasks

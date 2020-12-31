@@ -22,7 +22,7 @@ module.exports = class CloudLibrary extends Library {
 	// Generating installation scripts
 
 	get shellScriptToInstallLibrary() {
-		return ShellScripting.downloadAtPathInFolderFromPathAndUnzipFromPathToPath(
+		return ShellScripting.downloadToPathInFolderFromPathAndUnzipFromNameToName(
 			this.installPath,
 			this.installFolder,
 			this.archiveRemotePath,

@@ -26,7 +26,7 @@ module.exports = class ProductImport {
 	}
 
 	get importedBundleName() { return ResourceIdentification.finalPartOfBundleReference(this.importedBundleReference); }
-	get importedBundleReferenceTargetsPublicInterface() { return ResourceIdentification.bundleReferenceTargetsPublicInterface(this.importedBundleReference); }
+	get importedBundleReferencePointsToPublicInterface() { return ResourceIdentification.bundleReferencePointsToPublicInterface(this.importedBundleReference); }
 
 	// Getting the imported bundle
 
@@ -43,7 +43,7 @@ module.exports = class ProductImport {
 	get importedBundleIsProductBuild() {
 		const importedBundle = this.importedBundle;
 		if (importedBundle) {
-			return importedBundle.buildingInstruction && this.importedBundleReferenceTargetsPublicInterface;
+			return importedBundle.buildingInstruction && this.importedBundleReferencePointsToPublicInterface;
 		}
 		return false;
 	}
@@ -52,7 +52,7 @@ module.exports = class ProductImport {
 
 	get aliasFolder() { return this.parentProduct.productImportsInstallFolder; }
 	get aliasInstallPath() { return this.aliasFolder + this.importedBundleName; }
-	get targetInstallPath() { return (!this.importedBundleReferenceTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
+	get sourceInstallPath() { return (!this.importedBundleReferencePointsToPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
 
 	// Generating installation scripts
 
@@ -61,10 +61,10 @@ module.exports = class ProductImport {
 		if (this.importedBundleIsProductBuild) {
 			r = r.concat(ShellScripting.ensureDirectory(this.importedBundle.publicInstallPath));
 		}
-		r = r.concat(ShellScripting.linkAtPathInFolderToPath(
+		r = r.concat(ShellScripting.linkAliasPathInFolderToSourcePath(
 			this.aliasInstallPath,
 			this.aliasFolder,
-			this.targetInstallPath
+			this.sourceInstallPath
 		));
 		for (const importLink of Object.values(this.importLinks)) {
 			r = r.concat(importLink.shellScriptToInstallImportLink);

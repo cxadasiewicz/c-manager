@@ -20,7 +20,7 @@ module.exports = class BuildingInstruction {
 	// Generating build scripts
 
 	get shellScriptToCleanBuild() {
-		return ShellScripting.removeAllInFolder(this.parentProduct.publicInstallPath + "/");
+		return ShellScripting.remove(this.parentProduct.publicInstallPath + "/*");
 	}
 
 	// Configuring workspace tasks

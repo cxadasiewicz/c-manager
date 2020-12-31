@@ -36,10 +36,9 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	// Products
 	addProductsDataToProject(data, project) {
 		if (!data) { return }
-		for (const productKey of Object.keys(data)) {
+		for (const [productKey, productData] of Object.entries(data)) {
 			const product = new Product();
 			product.name = this.resolveVariables(productKey);
-			const productData = data[productKey];
 			product.localInstallFolder = this.resolveVariables(productData[ComponentsJSONDecoder._productLocalInstallFolder]);
 			product.publicName = this.resolveVariables(productData[ComponentsJSONDecoder._productPublicName]);
 			const buildData = productData[ComponentsJSONDecoder._productBuildingInstruction];
@@ -55,21 +54,21 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	// Libraries
 	addLibrariesDataToProject(data, project) {
 		if (!data) { return }
-		for (const libraryKey of Object.keys(data)) {
-			const libraryData = this.resolveVariables(data[libraryKey]).split(ComponentsJSONDecoder._specSeparator);
+		for (const [libraryKey, librarySpec] of Object.entries(data)) {
+			const librarySpecParts = this.resolveVariables(librarySpec).split(ComponentsJSONDecoder._specSeparator);
 			let library;
-			switch (libraryData[0]) {
+			switch (librarySpecParts[0]) {
 			case ComponentsJSONDecoder._gitHubLibrary:
 				library = new GitHubLibrary();
-				library.publisherUsername = libraryData[1];
-				library.publishedBundleName = libraryData[2];
-				library.version = libraryData[3];
-				library.publishedTagPrefix = (libraryData.length > 4 ? libraryData[4] : "");
-				library.oauthToken = (libraryData.length > 5 ? libraryData[5] : "");
+				library.publisherUsername = librarySpecParts[1];
+				library.publishedBundleName = librarySpecParts[2];
+				library.version = librarySpecParts[3];
+				library.publishedTagPrefix = (librarySpecParts.length > 4 ? librarySpecParts[4] : "");
+				library.oauthToken = (librarySpecParts.length > 5 ? librarySpecParts[5] : "");
 				break;
 			case ComponentsJSONDecoder._deviceLibrary:
 				library = new DeviceLibrary();
-				library.publishedBundlePath = libraryData[1];
+				library.publishedBundlePath = librarySpecParts[1];
 				break;
 			}
 			library.name = this.resolveVariables(libraryKey);
@@ -80,17 +79,15 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 	// Product imports
 	addProductImportsDataToProject(data, project) {
 		if (!data) { return }
-		for (const productKey of Object.keys(data)) {
+		for (const [productKey, productData] of Object.entries(data)) {
 			const product = project.products[this.resolveVariables(productKey)];
-			const productData = data[productKey];
-			for (const importKey of Object.keys(productData)) {
+			for (const [importKey, productImportData] of Object.entries(productData)) {
 				const productImport = new ProductImport();
 				productImport.importedBundleReference = this.resolveVariables(importKey);
-				const productImportData = productData[importKey];
-				for (const aliasKey of Object.keys(productImportData)) {
+				for (const [aliasKey, sourceSubpath] of Object.entries(productImportData)) {
 					const importLink = new ImportLink();
 					importLink.aliasFolderReference = this.resolveVariables(aliasKey);
-					importLink.targetSubpath = this.resolveVariables(productImportData[aliasKey]);
+					importLink.sourceSubpath = this.resolveVariables(sourceSubpath);
 					productImport.addImportLink(importLink);
 				}
 				product.addProductImport(productImport);

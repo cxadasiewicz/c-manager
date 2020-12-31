@@ -4,36 +4,33 @@
 
 module.exports = class ShellScripting {
 
-	static downloadPathToPath(remote, local) { return [`curl -L ${remote} --output ${local}`]; }
+	static downloadFromTo(cloud, device) { return [`curl -L ${cloud} --output ${device}`]; }
 	static ensureDirectory(source) { return [`mkdir -p ${source}`]; }
-	static linkPathToPath(alias, target) { return [`ln -s $(pwd)/${target} $(pwd)/${alias}`]; }
-	static movePathToPath(source, target) { return [`mv ${source} ${target}`]; }
-	static removeAllInFolder(source) { return [`rm -rf ${source}*`]; }
-	static removeEmptyDirectory(source) { return [`rm -fd ${source}`]; }
-	static removeFile(source) { return [`rm -f ${source}`]; }
-	static removeDirectory(source) { return [`rm -rf ${source}`]; }
-	static unzipFileToDirectory(file, parent) { return [`(cd ${parent}; unzip ${file})`]; }
+	static linkSourceToAlias(source, alias) { return [`ln -s $(pwd)/${source} $(pwd)/${alias}`]; }
+	static moveFromTo(source, destination) { return [`mv ${source} ${destination}`]; }
+	static remove(source) { return [`rm -rf ${source}`]; }
+	static unzipInFolder(source, parent) { return [`(cd ${parent}; unzip ${source})`]; }
 
-	static downloadAtPathInFolderFromPathAndUnzipFromPathToPath(installPath, installFolder, remotePath, compressedName, expandedName) {
+	static downloadToPathInFolderFromPathAndUnzipFromNameToName(installPath, installFolder, remotePath, compressedName, expandedName) {
 		let r = [];
-		const compressedPath = installFolder + compressedName;
-		const expandedPath = installFolder + expandedName;
-		r = r.concat(this.removeDirectory(installPath));
-		r = r.concat(this.removeFile(compressedPath));
-		r = r.concat(this.removeDirectory(expandedPath));
+		const compressedInstallPath = installFolder + compressedName;
+		const expandedInstallPath = installFolder + expandedName;
+		r = r.concat(this.remove(installPath));
+		r = r.concat(this.remove(compressedInstallPath));
+		r = r.concat(this.remove(expandedInstallPath));
 		r = r.concat(this.ensureDirectory(installFolder));
-		r = r.concat(this.downloadPathToPath(remotePath, compressedPath));
-		r = r.concat(this.unzipFileToDirectory(compressedName, installFolder));
-		r = r.concat(this.removeFile(installFolder + compressedName));
-		r = r.concat(this.movePathToPath(expandedPath, installPath));
+		r = r.concat(this.downloadFromTo(remotePath, compressedInstallPath));
+		r = r.concat(this.unzipInFolder(compressedName, installFolder));
+		r = r.concat(this.remove(compressedInstallPath));
+		r = r.concat(this.moveFromTo(expandedInstallPath, installPath));
 		return r;
 	}
 
-	static linkAtPathInFolderToPath(installPath, installFolder, targetPath) {
+	static linkAliasPathInFolderToSourcePath(aliasInstallPath, aliasInstallFolder, sourceInstallPath) {
 		let r = [];
-		r = r.concat(this.removeFile(installPath));
-		r = r.concat(this.ensureDirectory(installFolder));
-		r = r.concat(this.linkPathToPath(installPath, targetPath));
+		r = r.concat(this.remove(aliasInstallPath));
+		r = r.concat(this.ensureDirectory(aliasInstallFolder));
+		r = r.concat(this.linkSourceToAlias(sourceInstallPath, aliasInstallPath));
 		return r;
 	}
 };

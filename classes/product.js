@@ -46,7 +46,7 @@ module.exports = class Product extends Bundle {
 	}
 	get shellScriptToUninstallProductImports() {
 		let r = [];
-		r = r.concat(ShellScripting.removeDirectory(this.productImportsInstallFolder));
+		r = r.concat(ShellScripting.remove(this.productImportsInstallFolder));
 		for (const productImport of Object.values(this.productImports)) {
 			r = r.concat(productImport.shellScriptToUninstallProductImport);
 		}

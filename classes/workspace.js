@@ -25,14 +25,20 @@ module.exports = class Workspace {
 		this.projects.push(project);
 	}
 
-	// Managing files
+	// Getting workspace options
 
-	readJSONAt(path) {
+	workspaceOption(option) {
 		return null;
 	}
+
+	// Reading files
+
 	tryReadingJSONAt(path) {
+		return null;
+	}
+	readJSONAt(path) {
 		try {
-			return this.readJSONAt(path);
+			return this.tryReadingJSONAt(path);
 		} catch(e) {
 			return null;
 		}
@@ -42,7 +48,7 @@ module.exports = class Workspace {
 
 	decodeAnyProjectAt(localBundlePath, parentProject, decoder) {
 		const packageJSONLocalInstallFolder = (!localBundlePath ? "" : localBundlePath + "/");
-		const packageData = this.tryReadingJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + ResourceIdentification.packageJSONPath);
+		const packageData = this.readJSONAt((parentProject ? parentProject.installPath + "/" : "") + packageJSONLocalInstallFolder + ResourceIdentification.packageJSONPath);
 		if (!packageData) { return null; }
 		const componentsData = decoder.componentsDataFrom(packageData);
 		if (!componentsData) { return null; }
@@ -74,12 +80,6 @@ module.exports = class Workspace {
 			}
 			project = projectQueue.pop();
 		}
-	}
-
-	// Getting workspace options
-
-	workspaceOption(option) {
-		return null;
 	}
 
 	// Configuring tasks

@@ -10,7 +10,7 @@ module.exports = class ImportLink {
 	constructor() {
 		this.parentImport = null;
 		this.aliasFolderReference = "";
-		this.targetSubpath = "";
+		this.sourceSubpath = "";
 		this._aliasFolderCache = undefined;
 	}
 	get descriptionOverrides() {
@@ -45,18 +45,18 @@ module.exports = class ImportLink {
 
 	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + ResourceIdentification.productImportsFolder; }
 	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.importedBundleName; }
-	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetSubpath; }
+	get sourceInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.sourceSubpath; }
 
 	// Generating installation scripts
 
 	get shellScriptToInstallImportLink() {
-		return ShellScripting.linkAtPathInFolderToPath(
+		return ShellScripting.linkAliasPathInFolderToSourcePath(
 			this.aliasInstallPath,
 			this.aliasInstallFolder,
-			this.targetInstallPath
+			this.sourceInstallPath
 		);
 	}
 	get shellScriptToUninstallImportLink() {
-		return ShellScripting.removeDirectory(this.aliasInstallFolder);
+		return ShellScripting.remove(this.aliasInstallFolder);
 	}
 };

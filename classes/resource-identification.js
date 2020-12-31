@@ -22,11 +22,11 @@ module.exports = class ResourceIdentification {
 	static get bundleReferencePathPartSeparator() { return "."; }
 	static get bundleReferencePublicInterfaceSuffix() { return this.bundleReferencePathPartSeparator + this.publicInterfaceName; }
 
-	static bundleReferenceTargetsPublicInterface(reference) {
+	static bundleReferencePointsToPublicInterface(reference) {
 		return reference.endsWith(this.bundleReferencePublicInterfaceSuffix);
 	}
 	static pathOfBundleReference(reference) {
-		if (!this.bundleReferenceTargetsPublicInterface(reference)) { return reference; }
+		if (!this.bundleReferencePointsToPublicInterface(reference)) { return reference; }
 		return reference.substring(0, reference.length - this.bundleReferencePublicInterfaceSuffix.length);
 	}
 	static partsOfBundleReferencePath(referencePath, limit = undefined) {

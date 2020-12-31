@@ -17,7 +17,7 @@ module.exports = class DeviceLibrary extends Library {
 	// Generating installation scripts
 
 	get shellScriptToInstallLibrary() {
-		return ShellScripting.linkAtPathInFolderToPath(
+		return ShellScripting.linkAliasPathInFolderToSourcePath(
 			this.installPath,
 			this.installFolder,
 			this.parentBundle.installPath + "/" + this.publishedBundlePath
