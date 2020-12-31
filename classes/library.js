@@ -24,5 +24,7 @@ module.exports = class Library extends Bundle {
 
 	// Generating installation scripts
 
-	get shellScriptToInstallLibrary() { }
+	get shellScriptToInstallLibrary() {
+		return [];
+	}
 };

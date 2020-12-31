@@ -29,7 +29,9 @@ module.exports = class Workspace {
 
 	// Managing files
 
-	readJSONAt(path) { }
+	readJSONAt(path) {
+		return null;
+	}
 	tryReadingJSONAt(path) {
 		try {
 			return this.readJSONAt(path);
@@ -62,7 +64,7 @@ module.exports = class Workspace {
 		while (project) {
 			for (const libraryKey of Object.keys(project.libraries)) {
 				const library = project.libraries[libraryKey];
-				let libraryPath = library.pointedBundlePath;
+				let libraryPath = library.deviceBundlePath;
 				if (!libraryPath) {
 					libraryPath = ResourceIdentification.librariesFolder + libraryKey;
 				}
@@ -78,7 +80,9 @@ module.exports = class Workspace {
 
 	// Getting workspace options
 
-	workspaceOption(option) { }
+	workspaceOption(option) {
+		return null;
+	}
 
 	// Configuring tasks
 

@@ -2,6 +2,7 @@
 "use strict";
 
 const ResourceIdentification = require("./resource-identification");
+const ShellScripting = require("./shell-scripting");
 
 
 module.exports = class ImportLink {
@@ -45,4 +46,17 @@ module.exports = class ImportLink {
 	get aliasInstallFolder() { return this.parentImport.parentProduct.installPath + "/" + this.aliasFolder + ResourceIdentification.productImportsFolder; }
 	get aliasInstallPath() { return this.aliasInstallFolder + this.parentImport.importedBundleName; }
 	get targetInstallPath() { return this.parentImport.aliasInstallPath + "/" + this.targetSubpath; }
+
+	// Generating installation scripts
+
+	get shellScriptToInstallImportLink() {
+		return ShellScripting.linkAtPathInFolderToPath(
+			this.aliasInstallPath,
+			this.aliasInstallFolder,
+			this.targetInstallPath
+		);
+	}
+	get shellScriptToUninstallImportLink() {
+		return ShellScripting.removeDirectory(this.aliasInstallFolder);
+	}
 };

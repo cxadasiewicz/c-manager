@@ -43,6 +43,8 @@ module.exports = class ComponentsDecoder {
 
 	// Decoding components
 
-	componentsDataFrom(data) { }
+	componentsDataFrom(data) {
+		return null;
+	}
 	addComponentsDataToProject(data, project) { }
 };

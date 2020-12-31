@@ -1,17 +1,14 @@
 
 "use strict";
 
-const Library = require("./library");
-const ShellScripting = require("./shell-scripting");
+const CloudLibrary = require("./cloud-library");
 
 
-module.exports = class GitHubLibrary extends Library {
+module.exports = class GitHubLibrary extends CloudLibrary {
 
 	constructor() {
 		super();
 		this.publisherUsername = "";
-		this.publishedBundleName = "";
-		this.version = "";
 		this.publishedTagPrefix = "";
 		this.oauthToken = "";
 	}
@@ -29,22 +26,5 @@ module.exports = class GitHubLibrary extends Library {
 			+ this.publishedTagPrefix
 			+ this.version
 			+ ".zip";
-	}
-	get archiveCompressedName() { return this.publishedBundleName + "-download.zip"; }
-	get archiveExpandedName() { return this.publishedBundleName + "-" + this.version; }
-
-	// Generating installation scripts
-
-	get shellScriptToInstallLibrary() {
-		let r = [];
-		r = r.concat(ShellScripting.removeDirectory(this.installPath));
-		r = r.concat(ShellScripting.removeFile(this.installFolder + this.archiveCompressedName));
-		r = r.concat(ShellScripting.removeDirectory(this.installFolder + this.archiveExpandedName));
-		r = r.concat(ShellScripting.ensureDirectory(this.installFolder));
-		r = r.concat(ShellScripting.downloadPathToPath(this.archiveRemotePath, this.installFolder + this.archiveCompressedName));
-		r = r.concat(ShellScripting.unzipFileToDirectory(this.archiveCompressedName, this.installFolder));
-		r = r.concat(ShellScripting.removeFile(this.installFolder + this.archiveCompressedName));
-		r = r.concat(ShellScripting.movePathToPath(this.installFolder + this.archiveExpandedName, this.installPath));
-		return r;
 	}
 };

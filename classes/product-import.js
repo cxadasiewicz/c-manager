@@ -2,6 +2,7 @@
 "use strict";
 
 const ResourceIdentification = require("./resource-identification");
+const ShellScripting = require("./shell-scripting");
 
 
 module.exports = class ProductImport {
@@ -50,6 +51,32 @@ module.exports = class ProductImport {
 
 	// Getting resource addresses
 
-	get aliasInstallPath() { return this.parentProduct.productImportsInstallFolder + this.importedBundleName; }
+	get aliasFolder() { return this.parentProduct.productImportsInstallFolder; }
+	get aliasInstallPath() { return this.aliasFolder + this.importedBundleName; }
 	get targetInstallPath() { return (!this.importedBundleReferenceTargetsPublicInterface ? this.importedBundle.installPath : this.importedBundle.publicInstallPath); }
+
+	// Generating installation scripts
+
+	get shellScriptToInstallProductImport() {
+		let r = [];
+		if (this.importedBundleIsProductBuild) {
+			r = r.concat(ShellScripting.ensureDirectory(this.importedBundle.publicInstallPath));
+		}
+		r = r.concat(ShellScripting.linkAtPathInFolderToPath(
+			this.aliasInstallPath,
+			this.aliasFolder,
+			this.targetInstallPath
+		));
+		for (const importLink of this.importLinks) {
+			r = r.concat(importLink.shellScriptToInstallImportLink);
+		}
+		return r;
+	}
+	get shellScriptToUninstallProductImport() {
+		let r = [];
+		for (const importLink of this.importLinks) {
+			r = r.concat(importLink.shellScriptToUninstallImportLink);
+		}
+		return r;
+	}
 };

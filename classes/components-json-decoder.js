@@ -3,9 +3,9 @@
 
 const BuildingInstruction = require("./building-instruction");
 const ComponentsDecoder = require("./components-decoder");
+const DeviceLibrary = require("./device-library");
 const GitHubLibrary = require("./github-library");
 const ImportLink = require("./import-link");
-const PointerLibrary = require("./pointer-library");
 const ProductImport = require("./product-import");
 const Product = require("./product");
 
@@ -23,7 +23,7 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 
 	static get _libraries() { return "libraries"; }
 	static get _gitHubLibrary() { return "github"; }
-	static get _pointerLibrary() { return "point"; }
+	static get _deviceLibrary() { return "point"; }
 
 	static get _productImports() { return "imports"; }
 
@@ -67,9 +67,9 @@ module.exports = class ComponentsJSONDecoder extends ComponentsDecoder {
 				library.publishedTagPrefix = (libraryData.length > 4 ? libraryData[4] : "");
 				library.oauthToken = (libraryData.length > 5 ? libraryData[5] : "");
 				break;
-			case ComponentsJSONDecoder._pointerLibrary:
-				library = new PointerLibrary();
-				library.pointedBundlePath = libraryData[1];
+			case ComponentsJSONDecoder._deviceLibrary:
+				library = new DeviceLibrary();
+				library.publishedBundlePath = libraryData[1];
 				break;
 			}
 			library.name = this.resolveVariables(libraryKey);
