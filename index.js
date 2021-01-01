@@ -13,7 +13,6 @@ const GruntWorkspace = require("./classes/grunt-workspace");
 const ImportLink = require("./classes/import-link");
 const Library = require("./classes/library");
 const Logger = require("./classes/logger");
-const Manager = require("./classes/manager");
 const ProductImport = require("./classes/product-import");
 const Product = require("./classes/product");
 const Project = require("./classes/project");
@@ -37,7 +36,6 @@ module.exports = class CManager {
 	static get ImportLink() { return ImportLink; }
 	static get Library() { return Library; }
 	static get Logger() { return Logger; }
-	static get Manager() { return Manager; }
 	static get ProductImport() { return ProductImport; }
 	static get Product() { return Product; }
 	static get Project() { return Project; }
@@ -45,6 +43,6 @@ module.exports = class CManager {
 	static get Workspace() { return Workspace; }
 
 	static configureGruntForComponents(grunt, makefuncs) {
-		Manager.configureGruntForComponents(grunt, makefuncs);
+		new GruntWorkspace(grunt, makefuncs).discoverProjectsAndConfigureTasks();
 	}
 };

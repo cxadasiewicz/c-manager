@@ -94,8 +94,8 @@ module.exports = class Project extends Bundle {
 		}
 	}
 
-	// Convenience tasks
-	configureWorkspaceToInstallAndUninstallAll(workspace) {
+	// Installing and uninstalling the project
+	configureWorkspaceToInstallAndUninstallProject(workspace) {
 		workspace.addCompoundTask(this.installTaskName(), [
 			this.installTaskName(ResourceIdentification.librariesName),
 			this.installTaskName(ResourceIdentification.productImportsName)
@@ -106,15 +106,48 @@ module.exports = class Project extends Bundle {
 		]);
 	}
 
-	configureWorkspaceConvenienceTasks(workspace) {
-		this.configureWorkspaceToInstallAndUninstallAll(workspace);
-	}
-
-	// All tasks
-	configureWorkspaceTasks(workspace) {
+	// All project tasks
+	configureWorkspaceToManageProject(workspace) {
 		this.configureWorkspaceToInstallAndUninstallLibraries(workspace);
 		this.configureWorkspaceToInstallAndUninstallProductImports(workspace);
 		this.configureWorkspaceToBuildAndCleanProducts(workspace);
-		this.configureWorkspaceConvenienceTasks(workspace);
+		this.configureWorkspaceToInstallAndUninstallProject(workspace);
+	}
+
+	// Installing and uninstalling all projects
+	static projectsInstallTaskName(section) { return ResourceIdentification.installTaskName(null, section); }
+	static projectsUninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(null, section); }
+
+	static configureWorkspaceToInstallAndUninstallAllProjects(workspace) {
+		let libraryInstallTasks = [];
+		let productImportInstallTasks = [];
+		for (const project of workspace.projects) {
+			libraryInstallTasks.push(project.installTaskName(ResourceIdentification.librariesName));
+			productImportInstallTasks.push(project.installTaskName(ResourceIdentification.productImportsName))
+		}
+		const installLibrariesTask = this.projectsInstallTaskName(ResourceIdentification.librariesName);
+		workspace.addCompoundTask(installLibrariesTask, libraryInstallTasks);
+		const installProductImportsTask = this.projectsInstallTaskName(ResourceIdentification.productImportsName);
+		workspace.addCompoundTask(installProductImportsTask, productImportInstallTasks);
+		workspace.addCompoundTask(this.projectsInstallTaskName(), [installLibrariesTask, installProductImportsTask]);
+		let libraryUninstallTasks = [];
+		let productImportUninstallTasks = [];
+		for (const project of workspace.projects.slice().reverse()) {
+			libraryUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.librariesName));
+			productImportUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.productImportsName))
+		}
+		const uninstallLibrariesTask = this.projectsUninstallTaskName(ResourceIdentification.librariesName);
+		workspace.addCompoundTask(uninstallLibrariesTask, libraryUninstallTasks);
+		const uninstallProductImportsTask = this.projectsUninstallTaskName(ResourceIdentification.productImportsName);
+		workspace.addCompoundTask(uninstallProductImportsTask, productImportUninstallTasks);
+		workspace.addCompoundTask(this.projectsUninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
+	}
+
+	// All workspace tasks
+	static configureWorkspaceToManageProjects(workspace) {
+		for (const project of workspace.projects) {
+			project.configureWorkspaceToManageProject(workspace);
+		}
+		this.configureWorkspaceToInstallAndUninstallAllProjects(workspace);
 	}
 };

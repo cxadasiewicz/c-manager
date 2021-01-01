@@ -40,9 +40,9 @@ module.exports = class Workspace {
 		}
 	}
 
-	// Collecting projects
+	// Discovering projects
 
-	collectAnyProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
+	discoverProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
 		const intermediateFolder = (projectSubpath ? projectSubpath + "/" : "");
 		const packageData = this.readJSONAt((parentProject ? parentProject.installPath + "/" : "") + intermediateFolder + ResourceIdentification.packageJSONPath);
 		if (!packageData) { return null; }
@@ -57,9 +57,9 @@ module.exports = class Workspace {
 		return r;
 	}
 
-	collectProjectsInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
+	discoverProjectsInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder) {
 		let r = [];
-		let project = this.collectAnyProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder);
+		let project = this.discoverProjectInProjectAtSubpathUsingDecoder(parentProject, projectSubpath, decoder);
 		if (project) {
 			r.push(project);
 			let projectQueue = [];
@@ -69,7 +69,7 @@ module.exports = class Workspace {
 					if (!libraryPath) {
 						libraryPath = library.localInstallPath;
 					}
-					const libraryProject = this.collectAnyProjectInProjectAtSubpathUsingDecoder(project, libraryPath, decoder);
+					const libraryProject = this.discoverProjectInProjectAtSubpathUsingDecoder(project, libraryPath, decoder);
 					if (libraryProject) {
 						library.libraryProject = libraryProject;
 						r.push(libraryProject);
@@ -81,12 +81,12 @@ module.exports = class Workspace {
 		}
 		return r;
 	}
-	collectProjectsUsingDecoder(decoder) {
-		return this.collectProjectsInProjectAtSubpathUsingDecoder(null, null, decoder);
+	discoverProjectsUsingDecoder(decoder) {
+		return this.discoverProjectsInProjectAtSubpathUsingDecoder(null, null, decoder);
 	}
 
-	collectProjects() {
-		this.projects = this.collectProjectsUsingDecoder(new ComponentsJSONDecoder());
+	discoverProjects() {
+		this.projects = this.discoverProjectsUsingDecoder(new ComponentsJSONDecoder());
 	}
 
 	// Configuring tasks
@@ -96,37 +96,12 @@ module.exports = class Workspace {
 	addShellTask(name, script) { }
 	addCompoundTask(name, subnames) { }
 
-	// Convenience tasks
-	installTaskName(section) { return ResourceIdentification.installTaskName(null, section); }
-	uninstallTaskName(section) { return ResourceIdentification.uninstallTaskName(null, section); }
-
-	configureToInstallAndUninstallAll() {
-		let libraryInstallTasks = [];
-		let productImportInstallTasks = [];
-		for (const project of this.projects) {
-			libraryInstallTasks.push(project.installTaskName(ResourceIdentification.librariesName));
-			productImportInstallTasks.push(project.installTaskName(ResourceIdentification.productImportsName))
-		}
-		const installLibrariesTask = this.installTaskName(ResourceIdentification.librariesName);
-		this.addCompoundTask(installLibrariesTask, libraryInstallTasks);
-		const installProductImportsTask = this.installTaskName(ResourceIdentification.productImportsName);
-		this.addCompoundTask(installProductImportsTask, productImportInstallTasks);
-		this.addCompoundTask(this.installTaskName(), [installLibrariesTask, installProductImportsTask]);
-		let libraryUninstallTasks = [];
-		let productImportUninstallTasks = [];
-		for (const project of this.projects.slice().reverse()) {
-			libraryUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.librariesName));
-			productImportUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.productImportsName))
-		}
-		const uninstallLibrariesTask = this.uninstallTaskName(ResourceIdentification.librariesName);
-		this.addCompoundTask(uninstallLibrariesTask, libraryUninstallTasks);
-		const uninstallProductImportsTask = this.uninstallTaskName(ResourceIdentification.productImportsName);
-		this.addCompoundTask(uninstallProductImportsTask, productImportUninstallTasks);
-		this.addCompoundTask(this.uninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
+	configureToManageProjects() {
+		Project.configureWorkspaceToManageProjects(this);
 	}
-
-	configureConvenienceTasks() {
-		this.configureToInstallAndUninstallAll();
+	configureTasks() {
+		this.beginConfiguringTasks();
+		this.configureToManageProjects();
 	}
 
 	// Managing debugging
@@ -141,13 +116,9 @@ module.exports = class Workspace {
 
 	// Running the main operation
 
-	discoverProjectsAndConfigureTasks(decoder = new ComponentsJSONDecoder()) {
-		this.collectProjects();
-		this.beginConfiguringTasks();
-		for (const project of this.projects) {
-			project.configureWorkspaceTasks(this);
-		}
-		this.configureConvenienceTasks();
+	discoverProjectsAndConfigureTasks() {
+		this.discoverProjects();
+		this.configureTasks();
 		this.runDebugging();
 	}
 };
