@@ -9,7 +9,7 @@ module.exports = class BuildingInstruction {
 
 	constructor(config) {
 		this.parentProduct = null;
-		this.makeTaskPluginName = config.makeTaskPluginName;
+		this.makefuncName = config.makefuncName;
 	}
 	get descriptionOverrides() {
 		return {
@@ -29,8 +29,8 @@ module.exports = class BuildingInstruction {
 	get cleanTaskName() { return ResourceIdentification.cleanTaskName(this.parentProduct); }
 
 	configureWorkspaceToBuildAndCleanProduct(workspace) {
-		workspace.addShellTask(this.cleanTaskName, this.shellScriptToCleanBuild);
-		workspace.configureMakeTaskPlugins[this.makeTaskPluginName](workspace, this.parentProduct);
-		workspace.addCompoundTask(this.buildTaskName, [this.cleanTaskName, this.makeTaskName]);
+		workspace.defineTaskWithNameAndScript(this.cleanTaskName, this.shellScriptToCleanBuild);
+		workspace.configureToMakeProduct(this.parentProduct);
+		workspace.defineTaskWithNameAndSubtasks(this.buildTaskName, [this.cleanTaskName, this.makeTaskName]);
 	}
 };

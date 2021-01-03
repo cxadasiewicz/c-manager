@@ -4,12 +4,16 @@
 
 module.exports = class ShellScripting {
 
+	// Primitives
+
 	static downloadFromTo(cloud, device) { return [`curl -L ${cloud} --output ${device}`]; }
 	static ensureDirectory(source) { return [`mkdir -p ${source}`]; }
 	static linkSourceToAlias(source, alias) { return [`ln -s $(pwd)/${source} $(pwd)/${alias}`]; }
 	static moveFromTo(source, destination) { return [`mv ${source} ${destination}`]; }
 	static remove(source) { return [`rm -rf ${source}`]; }
 	static unzipInFolder(source, parent) { return [`(cd ${parent}; unzip ${source})`]; }
+
+	// Composites
 
 	static downloadToPathInFolderFromPathAndUnzipFromNameToName(installPath, installFolder, remotePath, compressedName, expandedName) {
 		let r = [];

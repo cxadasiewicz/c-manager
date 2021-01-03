@@ -68,8 +68,8 @@ module.exports = class Project extends Bundle {
 		for (const library of Object.values(this.libraries)) {
 			installScript = installScript.concat(library.shellScriptToInstallLibrary);
 		}
-		workspace.addShellTask(this.installTaskName(ResourceIdentification.librariesName), installScript);
-		workspace.addShellTask(this.uninstallTaskName(ResourceIdentification.librariesName), this.shellScriptToUninstallLibraries);
+		workspace.defineTaskWithNameAndScript(this.installTaskName(ResourceIdentification.librariesName), installScript);
+		workspace.defineTaskWithNameAndScript(this.uninstallTaskName(ResourceIdentification.librariesName), this.shellScriptToUninstallLibraries);
 	}
 
 	// Installing and uninstalling product imports
@@ -80,8 +80,8 @@ module.exports = class Project extends Bundle {
 			installScript = installScript.concat(product.shellScriptToInstallProductImports);
 			uninstallScript = uninstallScript.concat(product.shellScriptToUninstallProductImports);
 		}
-		workspace.addShellTask(this.installTaskName(ResourceIdentification.productImportsName), installScript);
-		workspace.addShellTask(this.uninstallTaskName(ResourceIdentification.productImportsName), uninstallScript);
+		workspace.defineTaskWithNameAndScript(this.installTaskName(ResourceIdentification.productImportsName), installScript);
+		workspace.defineTaskWithNameAndScript(this.uninstallTaskName(ResourceIdentification.productImportsName), uninstallScript);
 	}
 
 	// Building and cleaning products
@@ -96,11 +96,11 @@ module.exports = class Project extends Bundle {
 
 	// Installing and uninstalling the project
 	configureWorkspaceToInstallAndUninstallProject(workspace) {
-		workspace.addCompoundTask(this.installTaskName(), [
+		workspace.defineTaskWithNameAndSubtasks(this.installTaskName(), [
 			this.installTaskName(ResourceIdentification.librariesName),
 			this.installTaskName(ResourceIdentification.productImportsName)
 		]);
-		workspace.addCompoundTask(this.uninstallTaskName(), [
+		workspace.defineTaskWithNameAndSubtasks(this.uninstallTaskName(), [
 			this.uninstallTaskName(ResourceIdentification.productImportsName),
 			this.uninstallTaskName(ResourceIdentification.librariesName)
 		]);
@@ -126,10 +126,10 @@ module.exports = class Project extends Bundle {
 			productImportInstallTasks.push(project.installTaskName(ResourceIdentification.productImportsName))
 		}
 		const installLibrariesTask = this.projectsInstallTaskName(ResourceIdentification.librariesName);
-		workspace.addCompoundTask(installLibrariesTask, libraryInstallTasks);
+		workspace.defineTaskWithNameAndSubtasks(installLibrariesTask, libraryInstallTasks);
 		const installProductImportsTask = this.projectsInstallTaskName(ResourceIdentification.productImportsName);
-		workspace.addCompoundTask(installProductImportsTask, productImportInstallTasks);
-		workspace.addCompoundTask(this.projectsInstallTaskName(), [installLibrariesTask, installProductImportsTask]);
+		workspace.defineTaskWithNameAndSubtasks(installProductImportsTask, productImportInstallTasks);
+		workspace.defineTaskWithNameAndSubtasks(this.projectsInstallTaskName(), [installLibrariesTask, installProductImportsTask]);
 		let libraryUninstallTasks = [];
 		let productImportUninstallTasks = [];
 		for (const project of workspace.projects.slice().reverse()) {
@@ -137,10 +137,10 @@ module.exports = class Project extends Bundle {
 			productImportUninstallTasks.push(project.uninstallTaskName(ResourceIdentification.productImportsName))
 		}
 		const uninstallLibrariesTask = this.projectsUninstallTaskName(ResourceIdentification.librariesName);
-		workspace.addCompoundTask(uninstallLibrariesTask, libraryUninstallTasks);
+		workspace.defineTaskWithNameAndSubtasks(uninstallLibrariesTask, libraryUninstallTasks);
 		const uninstallProductImportsTask = this.projectsUninstallTaskName(ResourceIdentification.productImportsName);
-		workspace.addCompoundTask(uninstallProductImportsTask, productImportUninstallTasks);
-		workspace.addCompoundTask(this.projectsUninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
+		workspace.defineTaskWithNameAndSubtasks(uninstallProductImportsTask, productImportUninstallTasks);
+		workspace.defineTaskWithNameAndSubtasks(this.projectsUninstallTaskName(), [uninstallProductImportsTask, uninstallLibrariesTask]);
 	}
 
 	// All workspace tasks

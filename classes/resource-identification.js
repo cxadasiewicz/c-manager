@@ -5,6 +5,7 @@
 module.exports = class ResourceIdentification {
 
 	// Global names
+
 	static get librariesName() { return "libraries"; }
 	static get productImportsName() { return "imports"; }
 	static get buildName() { return "build"; }
@@ -12,6 +13,7 @@ module.exports = class ResourceIdentification {
 	static get publicInterfaceName() { return "public"; }
 
 	// Global folders and paths
+
 	static get librariesFolder() { return this.librariesName + "/"; }
 	static get productImportsFolder() { return this.productImportsName + "/"; }
 	static get buildFolder() { return this.buildName + "/"; }
@@ -19,6 +21,7 @@ module.exports = class ResourceIdentification {
 	static get packageJSONPath() { return "package.json"; }
 
 	// Bundle references
+
 	static get bundleReferencePathPartSeparator() { return "."; }
 	static get bundleReferencePublicInterfaceSuffix() { return this.bundleReferencePathPartSeparator + this.publicInterfaceName; }
 
@@ -38,6 +41,7 @@ module.exports = class ResourceIdentification {
 	}
 
 	// Workspace tasks
+
 	static get taskNameSeparator() { return "_"; }
 	static get globalTaskSuffix() { return "-all"; }
 	static taskName(action, component, section) {

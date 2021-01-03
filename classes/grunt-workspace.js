@@ -2,21 +2,21 @@
 "use strict";
 
 const Logger = require("./logger");
-const Workspace = require("./workspace");
+const WorkspaceImplementer = require("./workspace-implementer");
 
 
-module.exports = class GruntWorkspace extends Workspace {
+module.exports = class GruntWorkspace extends WorkspaceImplementer {
 
 	static get debugConfigOption() { return "debug-config"; }
 
-	constructor(grunt, configureMakeTaskPlugins = {}) {
-		super(configureMakeTaskPlugins);
+	constructor(grunt, plugins = {}) {
+		super(plugins);
 		this.grunt = grunt;
 	}
 	get descriptionOverrides() {
-		let r = super.descriptionOverrides;
-		r["grunt"] = (this.grunt ? "<grunt>" : null);
-		return r;
+		return [
+			"grunt": (this.grunt ? "<grunt>" : null)
+		];
 	}
 
 	// Getting workspace options
@@ -25,21 +25,15 @@ module.exports = class GruntWorkspace extends Workspace {
 		return this.grunt.option(option);
 	}
 
-	// Reading files
+	// Reading JSON files via the shell
 
-	tryReadingJSONAt(path) {
+	tryReadingJSONFileAt(path) {
 		return this.grunt.file.readJSON(path);
 	}
 
-	// Configuring tasks
+	// Defining shell tasks
 
-	beginConfiguringTasks() {
-		this.grunt.initConfig({});
-		this.grunt.registerTask("default", []);
-		this.grunt.loadNpmTasks("grunt-shell");
-	}
-
-	addShellTask(name, script) {
+	defineTaskWithNameAndScript(name, script) {
 		if (script.length) {
 			this.grunt.config.merge({
 				shell: {
@@ -53,11 +47,19 @@ module.exports = class GruntWorkspace extends Workspace {
 			this.grunt.registerTask(name, []);
 		}
 	}
-	addCompoundTask(name, subnames) {
+	defineTaskWithNameAndSubtasks(name, subtasks) {
 		this.grunt.registerTask(name, subnames);
 	}
 
-	// Managing debugging
+	// Configuring tasks
+
+	beginConfiguringTasks() {
+		this.grunt.initConfig({});
+		this.grunt.registerTask("default", []);
+		this.grunt.loadNpmTasks("grunt-shell");
+	}
+
+	// Debugging
 
 	get shouldDebugConfig() { return this.workspaceOption(GruntWorkspace.debugConfigOption); }
 
