@@ -14,9 +14,9 @@ module.exports = class GruntWorkspace extends WorkspaceImplementer {
 		this.grunt = grunt;
 	}
 	get descriptionOverrides() {
-		return [
+		return {
 			"grunt": (this.grunt ? "<grunt>" : null)
-		];
+		};
 	}
 
 	// Getting workspace options
@@ -48,7 +48,7 @@ module.exports = class GruntWorkspace extends WorkspaceImplementer {
 		}
 	}
 	defineTaskWithNameAndSubtasks(name, subtasks) {
-		this.grunt.registerTask(name, subnames);
+		this.grunt.registerTask(name, subtasks);
 	}
 
 	// Configuring tasks

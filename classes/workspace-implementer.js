@@ -3,6 +3,7 @@
 
 const ComponentsStandardDecoder = require("./components-standard-decoder");
 const Logger = require("./logger");
+const Project = require("./project");
 const ResourceIdentification = require("./resource-identification");
 const Workspace = require("./workspace");
 
@@ -29,7 +30,7 @@ module.exports = class WorkspaceImplementer extends Workspace {
 	}
 	readJSONFileAt(path) {
 		try {
-			return this.tryReadingJSONAt(path);
+			return this.tryReadingJSONFileAt(path);
 		} catch(e) {
 			return null;
 		}
@@ -37,12 +38,12 @@ module.exports = class WorkspaceImplementer extends Workspace {
 
 	// Configuring to make products
 
-	configureToMakeProduct(product) {
+	configureToMakeProductUsingBuildingInstruction(buildingInstruction) {
 		const productMakefuncs = this.plugins.productMakefuncs;
 		if (productMakefuncs) {
 			for (const makefunc of productMakefuncs) {
-				if makefunc.productMakefuncName == product.makefuncName {
-					makefunc.configureWorkspaceToMakeProduct(this, product);
+				if (makefunc.productMakefuncName == buildingInstruction.makefuncName) {
+					makefunc.configureWorkspaceToMakeProduct(this, buildingInstruction.parentProduct);
 					return;
 				}
 			}
@@ -58,11 +59,11 @@ module.exports = class WorkspaceImplementer extends Workspace {
 		const componentsData = componentsDecoder.decodeJSONAsComponentsData(packageJSON);
 		if (!componentsData) { return null; }
 		const r = new Project({
-			name: packageData.name,
+			name: packageJSON.name,
 			localInstallFolder: intermediateFolder + "../",
 			parentBundle: parentProject
 		});
-		decoder.decodeComponentsDataIntoProject(componentsData, r);
+		componentsDecoder.decodeComponentsDataIntoProject(componentsData, r);
 		return r;
 	}
 	discoverProjectsInProjectAtSubpathUsingComponentsDecoder(parentProject, projectSubpath, componentsDecoder) {

@@ -30,7 +30,7 @@ module.exports = class BuildingInstruction {
 
 	configureWorkspaceToBuildAndCleanProduct(workspace) {
 		workspace.defineTaskWithNameAndScript(this.cleanTaskName, this.shellScriptToCleanBuild);
-		workspace.configureToMakeProduct(this.parentProduct);
+		workspace.configureToMakeProductUsingBuildingInstruction(this);
 		workspace.defineTaskWithNameAndSubtasks(this.buildTaskName, [this.cleanTaskName, this.makeTaskName]);
 	}
 };

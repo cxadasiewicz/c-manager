@@ -21,5 +21,5 @@ module.exports = class Workspace {
 
 	// Configuring to make products
 
-	configureToMakeProduct(product) { }
+	configureToMakeProductUsingBuildingInstruction(buildingInstruction) { }
 };
