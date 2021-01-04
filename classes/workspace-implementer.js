@@ -39,11 +39,11 @@ module.exports = class WorkspaceImplementer extends Workspace {
 	// Configuring to make products
 
 	configureToMakeProductUsingBuildingInstruction(buildingInstruction) {
-		const productMakefuncs = this.plugins.productMakefuncs;
-		if (productMakefuncs) {
-			for (const makefunc of productMakefuncs) {
-				if (makefunc.productMakefuncName == buildingInstruction.makefuncName) {
-					makefunc.configureWorkspaceToMakeProduct(this, buildingInstruction.parentProduct);
+		const makefuncProviders = this.plugins.productMakefuncs;
+		if (makefuncProviders) {
+			for (const makefuncProvider of makefuncProviders) {
+				if (makefuncProvider.productMakefuncName == buildingInstruction.makefuncName) {
+					makefuncProvider.configureWorkspaceToMakeProduct(this, buildingInstruction.parentProduct);
 					return;
 				}
 			}
